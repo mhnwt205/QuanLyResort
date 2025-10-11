@@ -1,0 +1,594 @@
+@model QuanLyResort.ViewModels.OnlineBookingViewModel
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Đặt phòng online";
+}
+
+<style>
+    .booking-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .room-info-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    .form-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    .payment-method {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .payment-method:hover {
+        border-color: #667eea;
+        background-color: #f8f9ff;
+    }
+    .payment-method.selected {
+        border-color: #667eea;
+        background-color: #f0f4ff;
+    }
+    .price-summary {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .btn-book {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    .btn-book:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="booking-container">
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Có lỗi xảy ra:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Room Information -->
+    <div class="room-info-card">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <img src="@Model.RoomImage" alt="@Model.RoomName" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+            </div>
+            <div class="col-md-9">
+                <h2 class="mb-3">@Model.RoomName</h2>
+                <p class="mb-2"><i class="fas fa-bed me-2"></i>Loại phòng: @Model.RoomType</p>
+                <p class="mb-2"><i class="fas fa-money-bill-wave me-2"></i>Giá: @Model.RoomPrice.ToString("N0") VNĐ/đêm</p>
+                <p class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Số đêm: @Model.TotalNights đêm</p>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Book" method="post" id="bookingForm" autocomplete="off" novalidate>
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="RoomId" autocomplete="off" />
+        <input type="hidden" asp-for="RoomName" value="@Model.RoomName" autocomplete="off" />
+        <input type="hidden" asp-for="RoomType" value="@Model.RoomType" autocomplete="off" />
+        <input type="hidden" asp-for="RoomPrice" id="hiddenRoomPrice" value="@Model.RoomPrice" autocomplete="off" />
+        <input type="hidden" asp-for="RoomImage" value="@Model.RoomImage" autocomplete="off" />
+        <input type="hidden" asp-for="MaxOccupancy" value="@Model.MaxOccupancy" autocomplete="off" />
+        <input type="hidden" name="TotalAmount" id="hiddenTotalAmount" value="@Model.TotalAmount" autocomplete="off" />
+
+        <div class="row">
+            <!-- Left Column - Booking Details -->
+            <div class="col-md-8">
+                <!-- Booking Dates -->
+                <div class="form-section">
+                    <h4 class="mb-4"><i class="fas fa-calendar-check me-2"></i>Thông tin đặt phòng</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="CheckInDate" class="form-label"><i class="fas fa-sign-in-alt me-2"></i>Ngày nhận phòng</label>
+                                <input asp-for="CheckInDate" type="date" class="form-control" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="CheckOutDate" class="form-label"><i class="fas fa-sign-out-alt me-2"></i>Ngày trả phòng</label>
+                                <input asp-for="CheckOutDate" type="date" class="form-control" min="@DateTime.Today.AddDays(2).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="GuestCount" class="form-label"><i class="fas fa-users me-2"></i>Số lượng khách</label>
+                        <select asp-for="GuestCount" class="form-control" id="guestCountSelect">
+                            @for (int i = 1; i <= Model.MaxOccupancy; i++)
+                            {
+                                <option value="@i">@i khách</option>
+                            }
+                        </select>
+                        <small class="form-text text-muted">Tối đa @Model.MaxOccupancy khách cho phòng này</small>
+                        <span asp-validation-for="GuestCount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="form-section">
+                    <h4 class="mb-4"><i class="fas fa-user me-2"></i>Thông tin khách hàng</h4>
+                    <div class="form-group mb-3">
+                        <label asp-for="CustomerName" class="form-label"><i class="fas fa-id-card me-2"></i>Họ và tên <span class="text-danger">*</span></label>
+                        <input asp-for="CustomerName" 
+                               type="text" 
+                               class="form-control" 
+                               id="customerNameInput"
+                               name="CustomerName"
+                               placeholder="Nhập họ và tên đầy đủ" 
+                               value="@Model.CustomerName"
+                               autocomplete="off" 
+                               required />
+                        <span asp-validation-for="CustomerName" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="CustomerEmail" class="form-label"><i class="fas fa-envelope me-2"></i>Email <span class="text-danger">*</span></label>
+                                <input asp-for="CustomerEmail" 
+                                       type="email" 
+                                       class="form-control" 
+                                       id="customerEmailInput"
+                                       name="CustomerEmail"
+                                       placeholder="example@email.com" 
+                                       value="@Model.CustomerEmail"
+                                       autocomplete="off" 
+                                       @(User.Identity?.IsAuthenticated == true ? "readonly" : "")
+                                       required />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="CustomerPhone" class="form-label"><i class="fas fa-phone me-2"></i>Số điện thoại <span class="text-danger">*</span></label>
+                                <input asp-for="CustomerPhone" 
+                                       type="tel" 
+                                       class="form-control" 
+                                       id="customerPhoneInput"
+                                       name="CustomerPhone"
+                                       placeholder="0123456789" 
+                                       value="@Model.CustomerPhone"
+                                       autocomplete="off" 
+                                       required />
+                                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="CustomerAddress" class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ</label>
+                        <input asp-for="CustomerAddress" class="form-control" placeholder="Địa chỉ liên hệ (tùy chọn)" />
+                        <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="SpecialRequests" class="form-label"><i class="fas fa-comment me-2"></i>Ghi chú đặc biệt</label>
+                        <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Yêu cầu đặc biệt (tùy chọn)"></textarea>
+                        <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Payment & Summary -->
+            <div class="col-md-4">
+                <!-- Payment Method -->
+                <div class="form-section">
+                    <h4 class="mb-4"><i class="fas fa-credit-card me-2"></i>Phương thức thanh toán</h4>
+                    
+                    <div class="payment-method" onclick="selectPaymentMethod('cash')" id="cashMethod">
+                        <input type="radio" name="PaymentMethod" value="cash" id="cash" />
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Thanh toán tiền mặt</h5>
+                                <p class="mb-0 text-muted">Cọc 30% trước, thanh toán 70% còn lại khi nhận phòng</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method" onclick="selectPaymentMethod('momo')" id="momoMethod">
+                        <input type="radio" name="PaymentMethod" value="momo" id="momo" />
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-mobile-alt fa-2x text-danger"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Thanh toán MoMo</h5>
+                                <p class="mb-0 text-muted">Thanh toán 100% qua ví điện tử MoMo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                </div>
+
+                <!-- Price Summary -->
+                <div class="price-summary">
+                    <h5 class="mb-3"><i class="fas fa-calculator me-2"></i>Tổng kết</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Giá phòng/đêm:</span>
+                        <span id="roomPriceDisplay">@Model.RoomPrice.ToString("N0") VNĐ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Số đêm:</span>
+                        <span id="totalNights">@Model.TotalNights</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><strong>Tổng tiền:</strong></span>
+                        <span><strong id="totalAmount">@Model.TotalAmount.ToString("N0") VNĐ</strong></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" id="depositRow" style="display: none;">
+                        <span>Tiền cọc (30%):</span>
+                        <span id="depositAmount">0 VNĐ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" id="remainingRow" style="display: none;">
+                        <span>Còn lại:</span>
+                        <span id="remainingAmount">0 VNĐ</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span><strong>Thanh toán:</strong></span>
+                        <span><strong id="paymentAmount">@Model.TotalAmount.ToString("N0") VNĐ</strong></span>
+                    </div>
+                </div>
+
+                <!-- Book Button -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-book w-100" id="bookBtn">
+                        <i class="fas fa-check me-2"></i>Đặt phòng ngay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Global variables
+let roomPrice = @Model.RoomPrice;
+
+// Debug: Show model data
+console.log('=== MODEL DATA ===');
+console.log('RoomId:', @Model.RoomId);
+console.log('RoomName:', '@Model.RoomName');
+console.log('RoomType:', '@Model.RoomType');
+console.log('RoomPrice:', @Model.RoomPrice);
+console.log('MaxOccupancy:', @Model.MaxOccupancy);
+console.log('==================');
+
+// Global function for payment method selection
+function selectPaymentMethod(method) {
+    console.log('Selecting payment method:', method);
+    
+    // Remove selected class from all payment methods
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked method
+    const methodElement = document.getElementById(method + 'Method');
+    if (methodElement) {
+        methodElement.classList.add('selected');
+    }
+    
+    // Check the radio button
+    const radioButton = document.getElementById(method);
+    if (radioButton) {
+        radioButton.checked = true;
+        console.log('Radio button checked:', radioButton.value);
+        console.log('Radio button name:', radioButton.name);
+        console.log('Radio button attributes:', radioButton.attributes);
+        
+        // Debug: Check all radio buttons
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        console.log('All radio buttons:', allRadios);
+        allRadios.forEach(r => console.log('Radio:', r.id, 'Name:', r.name, 'Checked:', r.checked));
+    }
+    
+    updatePaymentAmount();
+}
+
+function updatePrice() {
+    console.log('Updating price...');
+    
+    // Try to get inputs
+    let checkInInput = document.getElementById('CheckInDate');
+    let checkOutInput = document.getElementById('CheckOutDate');
+    
+    // Fallback to date inputs by position
+    if (!checkInInput || !checkOutInput) {
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        if (dateInputs.length >= 2) {
+            checkInInput = dateInputs[0];
+            checkOutInput = dateInputs[1];
+        }
+    }
+    
+    if (!checkInInput || !checkOutInput) {
+        console.error('Cannot find date inputs in updatePrice');
+        return;
+    }
+    
+    const totalNightsSpan = document.getElementById('totalNights');
+    const totalAmountSpan = document.getElementById('totalAmount');
+    
+    const checkInValue = checkInInput.value;
+    const checkOutValue = checkOutInput.value;
+    
+    console.log('CheckIn:', checkInValue, 'CheckOut:', checkOutValue);
+    
+    if (checkInValue && checkOutValue) {
+        const checkIn = new Date(checkInValue + 'T00:00:00');
+        const checkOut = new Date(checkOutValue + 'T00:00:00');
+        
+        if (checkOut > checkIn) {
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const total = roomPrice * nights;
+            
+            console.log('Nights:', nights, 'Total:', total, 'RoomPrice:', roomPrice);
+            
+            totalNightsSpan.textContent = nights;
+            totalAmountSpan.textContent = total.toLocaleString('vi-VN') + ' VNĐ';
+            
+            updatePaymentAmount();
+            return;
+        }
+    }
+    
+    totalNightsSpan.textContent = '0';
+    totalAmountSpan.textContent = '0 VNĐ';
+    document.getElementById('paymentAmount').textContent = '0 VNĐ';
+    document.getElementById('depositRow').style.display = 'none';
+    document.getElementById('remainingRow').style.display = 'none';
+    }
+
+    function updatePaymentAmount() {
+    console.log('Updating payment amount...');
+    
+    const totalAmountSpan = document.getElementById('totalAmount');
+    const paymentAmountSpan = document.getElementById('paymentAmount');
+    const depositRow = document.getElementById('depositRow');
+    const remainingRow = document.getElementById('remainingRow');
+    const depositAmountSpan = document.getElementById('depositAmount');
+    const remainingAmountSpan = document.getElementById('remainingAmount');
+    
+        const totalText = totalAmountSpan.textContent.replace(/[^\d]/g, '');
+        const total = parseInt(totalText) || 0;
+    
+    // Try multiple selectors
+    let paymentMethod = document.querySelector('input[name="PaymentMethod"]:checked');
+    if (!paymentMethod) {
+        paymentMethod = document.querySelector('input[type="radio"]:checked');
+    }
+    
+    console.log('Total:', total, 'Payment Method:', paymentMethod ? paymentMethod.value : 'none');
+    console.log('Payment Method Element:', paymentMethod);
+    
+    if (total > 0) {
+        if (paymentMethod && paymentMethod.value === 'cash') {
+                const deposit = Math.round(total * 0.3);
+                const remaining = total - deposit;
+                
+                depositRow.style.display = 'flex';
+                remainingRow.style.display = 'flex';
+            depositAmountSpan.textContent = deposit.toLocaleString('vi-VN') + ' VNĐ';
+            remainingAmountSpan.textContent = remaining.toLocaleString('vi-VN') + ' VNĐ';
+            paymentAmountSpan.textContent = deposit.toLocaleString('vi-VN') + ' VNĐ';
+        } else if (paymentMethod && paymentMethod.value === 'momo') {
+            depositRow.style.display = 'none';
+            remainingRow.style.display = 'none';
+            paymentAmountSpan.textContent = total.toLocaleString('vi-VN') + ' VNĐ';
+            } else {
+            // No payment method selected
+                depositRow.style.display = 'none';
+                remainingRow.style.display = 'none';
+            paymentAmountSpan.textContent = total.toLocaleString('vi-VN') + ' VNĐ';
+        }
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded, Room Price:', roomPrice);
+    
+    // Try multiple ways to get inputs
+    let checkInInput = document.getElementById('CheckInDate');
+    let checkOutInput = document.getElementById('CheckOutDate');
+    
+    // If not found by ID, try by type and position
+    if (!checkInInput || !checkOutInput) {
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        console.log('Date inputs found:', dateInputs.length);
+        if (dateInputs.length >= 2) {
+            checkInInput = dateInputs[0];
+            checkOutInput = dateInputs[1];
+            console.log('Using inputs by position - CheckIn:', checkInInput, 'CheckOut:', checkOutInput);
+        }
+    }
+    
+    const guestCountSelect = document.getElementById('guestCountSelect');
+    const bookBtn = document.getElementById('bookBtn');
+
+    // Debug: Check if elements exist
+    console.log('CheckIn Input:', checkInInput);
+    console.log('CheckOut Input:', checkOutInput);
+    
+    if (!checkInInput || !checkOutInput) {
+        console.error('ERROR: Input elements still not found!');
+        return;
+    }
+
+    // Set default dates if not already set
+    if (!checkInInput.value) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        checkInInput.value = tomorrow.toISOString().split('T')[0];
+        console.log('Set CheckIn to:', checkInInput.value);
+    }
+    
+    if (!checkOutInput.value) {
+        const dayAfterTomorrow = new Date();
+        dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+        checkOutInput.value = dayAfterTomorrow.toISOString().split('T')[0];
+        console.log('Set CheckOut to:', checkOutInput.value);
+    }
+
+    // Event listeners
+    checkInInput.addEventListener('change', function() {
+        console.log('CheckIn changed:', this.value);
+        const checkIn = new Date(this.value + 'T00:00:00');
+        const minCheckOut = new Date(checkIn);
+        minCheckOut.setDate(minCheckOut.getDate() + 1);
+        checkOutInput.min = minCheckOut.toISOString().split('T')[0];
+        
+        // Auto-update check-out if it's before the new minimum
+        const currentCheckOut = new Date(checkOutInput.value + 'T00:00:00');
+        if (!checkOutInput.value || currentCheckOut <= checkIn) {
+            checkOutInput.value = minCheckOut.toISOString().split('T')[0];
+        }
+        
+        updatePrice();
+    });
+
+    checkOutInput.addEventListener('change', function() {
+        console.log('CheckOut changed:', this.value);
+        updatePrice();
+    });
+    
+    guestCountSelect.addEventListener('change', function() {
+        console.log('Guest count changed:', this.value);
+        updatePrice();
+    });
+
+    // Form submission
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        console.log('=== FORM SUBMIT DEBUG ===');
+        
+        // Check payment method
+        const paymentMethod = document.querySelector('input[name="PaymentMethod"]:checked');
+        if (!paymentMethod) {
+            e.preventDefault();
+            alert('Vui lòng chọn phương thức thanh toán!');
+            return false;
+        }
+        console.log('Payment Method:', paymentMethod.value);
+        
+        // Check customer inputs by ID (reliable method)
+        const customerName = document.getElementById('customerNameInput');
+        const customerEmail = document.getElementById('customerEmailInput');
+        const customerPhone = document.getElementById('customerPhoneInput');
+        
+        console.log('CustomerName:', customerName ? `[${customerName.value}]` : 'NOT FOUND');
+        console.log('CustomerEmail:', customerEmail ? `[${customerEmail.value}]` : 'NOT FOUND');
+        console.log('CustomerPhone:', customerPhone ? `[${customerPhone.value}]` : 'NOT FOUND');
+        
+        // Validate customer info - only prevent if absolutely certain
+        if (!customerName || !customerName.value.trim()) {
+            e.preventDefault();
+            alert('❌ Vui lòng nhập họ và tên!\n\n' + (customerName ? 'Input rỗng' : 'Không tìm thấy input'));
+            if (customerName) customerName.focus();
+            return false;
+        }
+        if (!customerEmail || !customerEmail.value.trim()) {
+            e.preventDefault();
+            alert('❌ Vui lòng nhập email!\n\n' + (customerEmail ? 'Input rỗng' : 'Không tìm thấy input'));
+            if (customerEmail) customerEmail.focus();
+            return false;
+        }
+        if (!customerPhone || !customerPhone.value.trim()) {
+            e.preventDefault();
+            alert('❌ Vui lòng nhập số điện thoại!\n\n' + (customerPhone ? 'Input rỗng' : 'Không tìm thấy input'));
+            if (customerPhone) customerPhone.focus();
+            return false;
+        }
+        
+        // Update hidden TotalAmount before submit
+        const totalAmountSpanElement = document.getElementById('totalAmount');
+        if (totalAmountSpanElement) {
+            const totalText = totalAmountSpanElement.textContent.replace(/[^\d]/g, '');
+            const totalAmount = parseInt(totalText) || 0;
+            const hiddenTotalInput = document.getElementById('hiddenTotalAmount');
+            
+            if (hiddenTotalInput) {
+                hiddenTotalInput.value = totalAmount;
+                console.log('Updated hiddenTotalAmount to:', totalAmount);
+            } else {
+                console.error('hiddenTotalAmount input not found!');
+            }
+            
+            console.log('Submitting form with TotalAmount:', totalAmount);
+            
+            if (totalAmount === 0) {
+                e.preventDefault();
+                alert('Lỗi: Tổng tiền = 0. Vui lòng chọn lại ngày check-in/check-out.');
+                return false;
+            }
+        } else {
+            e.preventDefault();
+            alert('Lỗi: Không tìm thấy thông tin tổng tiền. Vui lòng tải lại trang.');
+            return false;
+        }
+        
+        console.log('✅ Form validation passed, submitting...');
+        bookBtn.disabled = true;
+        bookBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+    });
+
+    // Initial price calculation
+    console.log('Running initial price calculation...');
+    updatePrice();
+});
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

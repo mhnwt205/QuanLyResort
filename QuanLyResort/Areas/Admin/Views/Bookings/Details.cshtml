@@ -1,0 +1,357 @@
+@model QuanLyResort.ViewModels.BookingDetailsViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Chi tiết đặt phòng";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Chi tiết đặt phòng: @Model.BookingCode</h5>
+                    <div>
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                            <i class="bx bx-arrow-back"></i> Quay lại
+                        </a>
+                        @if (Model.Status == "pending")
+                        {
+                            <a href="@Url.Action("Edit", new { id = Model.BookingId })" class="btn btn-warning ms-2">
+                                <i class="bx bx-edit"></i> Chỉnh sửa
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <!-- Thông tin đặt phòng -->
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Thông tin đặt phòng</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td class="fw-semibold">Mã đặt phòng:</td>
+                                            <td><span class="badge bg-label-primary">@Model.BookingCode</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Trạng thái:</td>
+                                            <td>
+                                                @switch (Model.Status)
+                                                {
+                                                    case "pending":
+                                                        <span class="badge bg-label-warning">Chờ duyệt</span>
+                                                        break;
+                                                    case "confirmed":
+                                                        <span class="badge bg-label-success">Đã xác nhận</span>
+                                                        break;
+                                                    case "checkedin":
+                                                        <span class="badge bg-label-primary">Đã nhận phòng</span>
+                                                        break;
+                                                    case "checkedout":
+                                                        <span class="badge bg-label-info">Đã trả phòng</span>
+                                                        break;
+                                                    case "cancelled":
+                                                        <span class="badge bg-label-danger">Đã hủy</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-label-secondary">@Model.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Ngày nhận phòng:</td>
+                                            <td>@Model.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Ngày trả phòng:</td>
+                                            <td>@Model.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Số đêm:</td>
+                                            <td>@Model.Nights đêm</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Số người lớn:</td>
+                                            <td>@Model.Adults người</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Số trẻ em:</td>
+                                            <td>@Model.Children người</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Tổng tiền:</td>
+                                            <td><span class="fw-bold text-primary">@Model.TotalAmount.ToString("N0") VNĐ</span></td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                                        {
+                                            <tr>
+                                                <td class="fw-semibold">Yêu cầu đặc biệt:</td>
+                                                <td>@Model.SpecialRequests</td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin khách hàng -->
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Thông tin khách hàng</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td class="fw-semibold">Tên khách hàng:</td>
+                                            <td>@Model.CustomerName</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Email:</td>
+                                            <td>@Model.CustomerEmail</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Số điện thoại:</td>
+                                            <td>@Model.CustomerPhone</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin phòng -->
+                    @if (!string.IsNullOrEmpty(Model.RoomNumber))
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6 class="card-title mb-0">Thông tin phòng</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <table class="table table-borderless">
+                                                    <tr>
+                                                        <td class="fw-semibold">Số phòng:</td>
+                                                        <td><span class="badge bg-label-info">@Model.RoomNumber</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-semibold">Loại phòng:</td>
+                                                        <td>@Model.RoomType</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-semibold">Giá phòng:</td>
+                                                        <td>@Model.RoomPrice.ToString("N0") VNĐ/đêm</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Dịch vụ đã đặt -->
+                    @if (Model.ServiceBookings.Any())
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6 class="card-title mb-0">Dịch vụ đã đặt</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Dịch vụ</th>
+                                                        <th>Ngày sử dụng</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Đơn giá</th>
+                                                        <th>Thành tiền</th>
+                                                        <th>Trạng thái</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var service in Model.ServiceBookings)
+                                                    {
+                                                        <tr>
+                                                            <td>@service.ServiceName</td>
+                                                            <td>@service.ServiceDate.ToString("dd/MM/yyyy")</td>
+                                                            <td>@service.Quantity</td>
+                                                            <td>@service.UnitPrice.ToString("N0") VNĐ</td>
+                                                            <td>@service.TotalAmount.ToString("N0") VNĐ</td>
+                                                            <td>
+                                                                @switch (service.Status)
+                                                                {
+                                                                    case "pending":
+                                                                        <span class="badge bg-label-warning">Chờ duyệt</span>
+                                                                        break;
+                                                                    case "confirmed":
+                                                                        <span class="badge bg-label-success">Đã xác nhận</span>
+                                                                        break;
+                                                                    case "completed":
+                                                                        <span class="badge bg-label-info">Hoàn thành</span>
+                                                                        break;
+                                                                    case "cancelled":
+                                                                        <span class="badge bg-label-danger">Đã hủy</span>
+                                                                        break;
+                                                                    default:
+                                                                        <span class="badge bg-label-secondary">@service.Status</span>
+                                                                        break;
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Hóa đơn -->
+                    @if (Model.Invoices.Any())
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6 class="card-title mb-0">Hóa đơn</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Số hóa đơn</th>
+                                                        <th>Ngày tạo</th>
+                                                        <th>Tổng tiền</th>
+                                                        <th>Trạng thái</th>
+                                                        <th>Thao tác</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var invoice in Model.Invoices)
+                                                    {
+                                                        <tr>
+                                                            <td>@invoice.InvoiceNumber</td>
+                                                            <td>@invoice.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                                                            <td>@invoice.TotalAmount.ToString("N0") VNĐ</td>
+                                                            <td>
+                                                                @switch (invoice.Status)
+                                                                {
+                                                                    case "draft":
+                                                                        <span class="badge bg-label-secondary">Nháp</span>
+                                                                        break;
+                                                                    case "approved":
+                                                                        <span class="badge bg-label-success">Đã duyệt</span>
+                                                                        break;
+                                                                    case "paid":
+                                                                        <span class="badge bg-label-primary">Đã thanh toán</span>
+                                                                        break;
+                                                                    case "cancelled":
+                                                                        <span class="badge bg-label-danger">Đã hủy</span>
+                                                                        break;
+                                                                    default:
+                                                                        <span class="badge bg-label-secondary">@invoice.Status</span>
+                                                                        break;
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <a href="@Url.Action("Details", "Invoices", new { id = invoice.InvoiceId })" class="btn btn-sm btn-outline-primary">
+                                                                    <i class="bx bx-show"></i> Xem
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Thao tác -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Thao tác</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @if (Model.Status == "pending")
+                                        {
+                                            <form asp-action="Confirm" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@Model.BookingId" />
+                                                <input type="hidden" name="roomId" value="@Model.RoomId" />
+                                                <button type="submit" class="btn btn-success" onclick="return confirm('Xác nhận đặt phòng này?')">
+                                                    <i class="bx bx-check"></i> Xác nhận
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (Model.Status == "confirmed")
+                                        {
+                                            <form asp-action="CheckIn" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@Model.BookingId" />
+                                                <button type="submit" class="btn btn-primary" onclick="return confirm('Thực hiện check-in?')">
+                                                    <i class="bx bx-log-in"></i> Check-in
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (Model.Status == "checkedin")
+                                        {
+                                            <form asp-action="CheckOut" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@Model.BookingId" />
+                                                <button type="submit" class="btn btn-info" onclick="return confirm('Thực hiện check-out?')">
+                                                    <i class="bx bx-log-out"></i> Check-out
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (Model.Status == "pending" || Model.Status == "confirmed")
+                                        {
+                                            <form asp-action="Delete" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@Model.BookingId" />
+                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Hủy đặt phòng này?')">
+                                                    <i class="bx bx-x"></i> Hủy
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,503 @@
+@model QuanLyResort.ViewModels.BookingDetailsViewModel
+@using Microsoft.EntityFrameworkCore
+@inject QuanLyResort.Models.ResortDbContext Context
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Chi tiết đặt phòng - Resort Deluxe";
+}
+
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Chi tiết đặt phòng</h1>
+                    <p>Thông tin chi tiết về đặt phòng @Model.BookingCode</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Details Section -->
+<section class="booking-details-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <div class="booking-details-header d-flex justify-content-between align-items-center mb-4">
+                    <h3>Đặt phòng @Model.BookingCode</h3>
+                    <div class="booking-status">
+                        @switch (Model.Status)
+                        {
+                            case "pending":
+                                <span class="badge bg-warning fs-6">Chờ duyệt</span>
+                                break;
+                            case "confirmed":
+                                <span class="badge bg-success fs-6">Đã xác nhận</span>
+                                break;
+                            case "checkedin":
+                                <span class="badge bg-primary fs-6">Đã nhận phòng</span>
+                                break;
+                            case "checkedout":
+                                <span class="badge bg-info fs-6">Đã trả phòng</span>
+                                break;
+                            case "cancelled":
+                                <span class="badge bg-danger fs-6">Đã hủy</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary fs-6">@Model.Status</span>
+                                break;
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Thông tin đặt phòng -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fa fa-info-circle"></i> Thông tin đặt phòng
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="booking-info-list">
+                                    <div class="info-item">
+                                        <span class="label">Mã đặt phòng:</span>
+                                        <span class="value fw-bold text-primary">@Model.BookingCode</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Ngày nhận phòng:</span>
+                                        <span class="value">@Model.CheckInDate.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Ngày trả phòng:</span>
+                                        <span class="value">@Model.CheckOutDate.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Số đêm:</span>
+                                        <span class="value">@Model.Nights đêm</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Số người lớn:</span>
+                                        <span class="value">@Model.Adults người</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Số trẻ em:</span>
+                                        <span class="value">@Model.Children người</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Tổng tiền:</span>
+                                        <span class="value fw-bold text-primary fs-5">@Model.TotalAmount.ToString("N0") VNĐ</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                                    {
+                                        <div class="info-item">
+                                            <span class="label">Yêu cầu đặc biệt:</span>
+                                            <span class="value">@Model.SpecialRequests</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin khách hàng -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fa fa-user"></i> Thông tin khách hàng
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="customer-info-list">
+                                    <div class="info-item">
+                                        <span class="label">Tên khách hàng:</span>
+                                        <span class="value fw-bold">@Model.CustomerName</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Email:</span>
+                                        <span class="value">@Model.CustomerEmail</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Số điện thoại:</span>
+                                        <span class="value">@Model.CustomerPhone</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông tin phòng -->
+                @if (!string.IsNullOrEmpty(Model.RoomNumber))
+                {
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fa fa-bed"></i> Thông tin phòng
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="room-info-item">
+                                                <span class="label">Số phòng:</span>
+                                                <span class="value badge bg-info fs-6">@Model.RoomNumber</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="room-info-item">
+                                                <span class="label">Loại phòng:</span>
+                                                <span class="value">@Model.RoomType</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="room-info-item">
+                                                <span class="label">Giá phòng:</span>
+                                                <span class="value fw-bold">@Model.RoomPrice.ToString("N0") VNĐ/đêm</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Dịch vụ đã đặt -->
+                @if (Model.ServiceBookings.Any())
+                {
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fa fa-concierge-bell"></i> Dịch vụ đã đặt
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Dịch vụ</th>
+                                                    <th>Ngày sử dụng</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Đơn giá</th>
+                                                    <th>Thành tiền</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var service in Model.ServiceBookings)
+                                                {
+                                                    <tr>
+                                                        <td>@service.ServiceName</td>
+                                                        <td>@service.ServiceDate.ToString("dd/MM/yyyy")</td>
+                                                        <td>@service.Quantity</td>
+                                                        <td>@service.UnitPrice.ToString("N0") VNĐ</td>
+                                                        <td class="fw-bold">@service.TotalAmount.ToString("N0") VNĐ</td>
+                                                        <td>
+                                                            @switch (service.Status)
+                                                            {
+                                                                case "pending":
+                                                                    <span class="badge bg-warning">Chờ duyệt</span>
+                                                                    break;
+                                                                case "confirmed":
+                                                                    <span class="badge bg-success">Đã xác nhận</span>
+                                                                    break;
+                                                                case "completed":
+                                                                    <span class="badge bg-info">Hoàn thành</span>
+                                                                    break;
+                                                                case "cancelled":
+                                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                                    break;
+                                                                default:
+                                                                    <span class="badge bg-secondary">@service.Status</span>
+                                                                    break;
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Lịch sử thanh toán -->
+                @{
+                    var onlinePayments = await Context.Set<QuanLyResort.Models.OnlinePayment>()
+                        .Where(p => p.BookingId == Model.BookingId)
+                        .OrderByDescending(p => p.CreatedAt)
+                        .ToListAsync();
+                }
+                @if (onlinePayments.Any())
+                {
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fa fa-credit-card"></i> Lịch sử thanh toán
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Phương thức</th>
+                                                    <th>Số tiền</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Hoàn thành</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var payment in onlinePayments)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @if (payment.PaymentMethod == "momo")
+                                                            {
+                                                                <i class="fa fa-mobile-alt text-danger me-2"></i>
+                                                                <span>MoMo</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="fa fa-money-bill-wave text-success me-2"></i>
+                                                                <span>Tiền mặt</span>
+                                                            }
+                                                        </td>
+                                                        <td class="fw-bold text-primary">@payment.Amount.ToString("N0") VNĐ</td>
+                                                        <td>
+                                                            @switch (payment.Status)
+                                                            {
+                                                                case "pending":
+                                                                    <span class="badge bg-warning">Chờ thanh toán</span>
+                                                                    break;
+                                                                case "pending_deposit":
+                                                                    <span class="badge bg-info">Chờ cọc</span>
+                                                                    break;
+                                                                case "completed":
+                                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                                    break;
+                                                                case "failed":
+                                                                    <span class="badge bg-danger">Thất bại</span>
+                                                                    break;
+                                                                default:
+                                                                    <span class="badge bg-secondary">@payment.Status</span>
+                                                                    break;
+                                                            }
+                                                        </td>
+                                                        <td>@payment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                                        <td>
+                                                            @if (payment.CompletedAt.HasValue)
+                                                            {
+                                                                @payment.CompletedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">-</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    @{
+                                        var lastPayment = onlinePayments.FirstOrDefault();
+                                        if (lastPayment != null && lastPayment.PaymentMethod == "cash" && lastPayment.Status == "pending_deposit")
+                                        {
+                                            <div class="alert alert-warning mt-3">
+                                                <h6><i class="fa fa-university me-2"></i>Hướng dẫn thanh toán cọc</h6>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Ngân hàng:</strong> Vietcombank</p>
+                                                        <p class="mb-1"><strong>STK:</strong> 1234567890</p>
+                                                        <p class="mb-1"><strong>Chủ TK:</strong> KHACH SAN RESORT DELUXE</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Nội dung:</strong> <span class="text-danger">@Model.BookingCode</span></p>
+                                                        <p class="mb-1"><strong>Số tiền:</strong> <span class="text-success">@lastPayment.Amount.ToString("N0") VNĐ</span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Hóa đơn -->
+                @if (Model.Invoices.Any())
+                {
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fa fa-receipt"></i> Hóa đơn
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Số hóa đơn</th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Tổng tiền</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var invoice in Model.Invoices)
+                                                {
+                                                    <tr>
+                                                        <td class="fw-bold">@invoice.InvoiceNumber</td>
+                                                        <td>@invoice.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                                                        <td class="fw-bold text-primary">@invoice.TotalAmount.ToString("N0") VNĐ</td>
+                                                        <td>
+                                                            @switch (invoice.Status)
+                                                            {
+                                                                case "draft":
+                                                                    <span class="badge bg-secondary">Nháp</span>
+                                                                    break;
+                                                                case "approved":
+                                                                    <span class="badge bg-success">Đã duyệt</span>
+                                                                    break;
+                                                                case "paid":
+                                                                    <span class="badge bg-primary">Đã thanh toán</span>
+                                                                    break;
+                                                                case "cancelled":
+                                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                                    break;
+                                                                default:
+                                                                    <span class="badge bg-secondary">@invoice.Status</span>
+                                                                    break;
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Thao tác -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fa fa-cogs"></i> Thao tác
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                        <i class="fa fa-arrow-left"></i> Quay lại danh sách
+                                    </a>
+                                    @if (Model.Status == "pending" || Model.Status == "confirmed")
+                                    {
+                                        <form asp-action="Cancel" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@Model.BookingId" />
+                                            <button type="submit" class="btn btn-outline-danger" 
+                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')">
+                                                <i class="fa fa-times"></i> Hủy đặt phòng
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-item .label {
+        font-weight: 600;
+        color: #666;
+        min-width: 150px;
+    }
+    
+    .info-item .value {
+        color: #333;
+        text-align: right;
+    }
+    
+    .room-info-item {
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .room-info-item .label {
+        display: block;
+        font-weight: 600;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .room-info-item .value {
+        display: block;
+        color: #333;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut();
+        }, 5000);
+    </script>
+}

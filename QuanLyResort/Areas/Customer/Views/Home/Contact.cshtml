@@ -1,0 +1,176 @@
+@{
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Liên Hệ";
+}
+
+<div class="hero-wrap" style="background-image: url(@Url.Content("~/assets/images/bg_1.jpg"));">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text d-flex align-itemd-end justify-content-center">
+            <div class="col-md-9 ftco-animate text-center d-flex align-items-end justify-content-center">
+                <div class="text">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="/Customer">Trang Chủ</a></span> <span>Liên Hệ</span></p>
+                    <h1 class="mb-4 bread">Liên Hệ Với Chúng Tôi</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="ftco-section contact-section bg-light">
+    <div class="container">
+        <div class="row d-flex mb-5 contact-info">
+            <div class="col-md-12 mb-4">
+                <h2 class="h3">Thông Tin Liên Hệ</h2>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-md-3 d-flex">
+                <div class="info bg-white p-4">
+                    <p><span>Địa chỉ:</span> 123 Đường Resort, Quận 1, TP. Hồ Chí Minh, Việt Nam</p>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex">
+                <div class="info bg-white p-4">
+                    <p><span>Điện thoại:</span> <a href="tel://+842812345678">+84 28 1234 5678</a></p>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex">
+                <div class="info bg-white p-4">
+                    <p><span>Email:</span> <a href="mailto:info@deluxeresort.vn">info@deluxeresort.vn</a></p>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex">
+                <div class="info bg-white p-4">
+                    <p><span>Website:</span> <a href="#">www.deluxeresort.vn</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="row block-9">
+            <div class="col-md-6 order-md-last d-flex">
+                <form action="#" class="bg-white p-5 contact-form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Họ và tên của bạn">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Email của bạn">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Chủ đề">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="" id="" cols="30" rows="7" class="form-control" placeholder="Nội dung tin nhắn"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Gửi Tin Nhắn" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-6 d-flex">
+                <div id="map" class="bg-white"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section text-center ftco-animate">
+                <h2>Giờ Làm Việc</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="text-center">
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <span class="flaticon-clock"></span>
+                        </div>
+                        <h4 class="heading-2">Lễ Tân 24/7</h4>
+                        <p>Dịch vụ lễ tân hoạt động 24 giờ mỗi ngày, sẵn sàng hỗ trợ quý khách mọi lúc.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="text-center">
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <span class="flaticon-serving-dish"></span>
+                        </div>
+                        <h4 class="heading-2">Nhà Hàng</h4>
+                        <p>Phục vụ từ 6:00 - 22:00 hàng ngày với menu đa dạng và chất lượng cao.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="text-center">
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <span class="flaticon-spa"></span>
+                        </div>
+                        <h4 class="heading-2">Spa & Wellness</h4>
+                        <p>Mở cửa từ 8:00 - 20:00, mang đến những trải nghiệm thư giãn tuyệt vời.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="text-center">
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <span class="flaticon-wine"></span>
+                        </div>
+                        <h4 class="heading-2">Bar & Lounge</h4>
+                        <p>Hoạt động từ 18:00 - 23:00 với các loại cocktail và rượu vang cao cấp.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section text-center ftco-animate">
+                <h2>Câu Hỏi Thường Gặp</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="block-7 text-center ftco-animate">
+                    <div class="text-center">
+                        <h4 class="heading-2">Thời gian nhận và trả phòng?</h4>
+                        <p>Thời gian nhận phòng: 14:00<br>
+                        Thời gian trả phòng: 12:00<br>
+                        Quý khách có thể yêu cầu late checkout (trả phòng muộn) với phụ phí.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="block-7 text-center ftco-animate">
+                    <div class="text-center">
+                        <h4 class="heading-2">Có bãi đỗ xe không?</h4>
+                        <p>Khách sạn có bãi đỗ xe rộng rãi và an toàn, miễn phí cho tất cả khách hàng lưu trú. Có dịch vụ valet parking.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="block-7 text-center ftco-animate">
+                    <div class="text-center">
+                        <h4 class="heading-2">Có WiFi miễn phí không?</h4>
+                        <p>Tất cả các khu vực trong khách sạn đều có WiFi miễn phí tốc độ cao. Mật khẩu được cung cấp tại lễ tân.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="block-7 text-center ftco-animate">
+                    <div class="text-center">
+                        <h4 class="heading-2">Chính sách hủy đặt phòng?</h4>
+                        <p>Hủy miễn phí trước 24 giờ. Hủy trong vòng 24 giờ sẽ tính phí 1 đêm. Liên hệ lễ tân để được hỗ trợ.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

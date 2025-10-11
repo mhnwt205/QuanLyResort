@@ -1,0 +1,140 @@
+@model IEnumerable<QuanLyResort.ViewModels.PaymentViewModel>
+
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Lịch sử thanh toán";
+}
+
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Lịch sử thanh toán</h1>
+                    <p>Xem lại các giao dịch thanh toán của bạn tại Resort Deluxe</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="payments-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">Danh sách thanh toán</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                @TempData["SuccessMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @TempData["ErrorMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="customerPaymentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Số thanh toán</th>
+                                        <th>Hóa đơn</th>
+                                        <th>Ngày thanh toán</th>
+                                        <th>Số tiền</th>
+                                        <th>Phương thức</th>
+                                        <th>Số tham chiếu</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="fw-semibold">@payment.PaymentNumber</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">#@payment.InvoiceId</span>
+                                            </td>
+                                            <td>@payment.PaymentDate.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <span class="fw-semibold @(payment.Amount < 0 ? "text-danger" : "")">
+                                                    @payment.Amount.ToString("N0") VNĐ
+                                                </span>
+                                                @if (payment.Amount < 0)
+                                                {
+                                                    <br><small class="text-muted">Hoàn tiền</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                @switch (payment.PaymentMethod)
+                                                {
+                                                    case "cash":
+                                                        <span class="badge bg-primary">Tiền mặt</span>
+                                                        break;
+                                                    case "card":
+                                                        <span class="badge bg-info">Thẻ</span>
+                                                        break;
+                                                    case "transfer":
+                                                        <span class="badge bg-success">Chuyển khoản</span>
+                                                        break;
+                                                    default:
+                                                        <span class="text-muted">@payment.PaymentMethod</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(payment.ReferenceNumber))
+                                                {
+                                                    <span class="text-muted">@payment.ReferenceNumber</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1">
+                                                    <a href="@Url.Action("Details", new { id = payment.PaymentId })" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fa fa-eye"></i> Chi tiết
+                                                    </a>
+                                                    <a href="@Url.Action("Print", new { id = payment.PaymentId })" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                                        <i class="fa fa-print"></i> In
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#customerPaymentsTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                },
+                "order": [[0, "desc"]],
+                "pageLength": 10,
+                "responsive": true
+            });
+        });
+    </script>
+}

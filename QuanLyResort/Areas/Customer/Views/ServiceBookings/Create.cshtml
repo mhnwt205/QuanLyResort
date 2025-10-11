@@ -1,0 +1,200 @@
+@model QuanLyResort.Models.ServiceBooking
+
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Đặt dịch vụ - Resort Deluxe";
+}
+
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Đặt dịch vụ</h1>
+                    <p>Đặt các dịch vụ tuyệt vời tại Resort Deluxe</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Service Booking Form Section -->
+<section class="service-booking-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="service-booking-form">
+                    <h3>Thông tin đặt dịch vụ</h3>
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CustomerId" class="form-label">Khách hàng</label>
+                                    <select asp-for="CustomerId" class="form-control" asp-items="@(new SelectList(ViewBag.CustomerId, "CustomerId", "FirstName"))">
+                                        <option value="">-- Chọn khách hàng --</option>
+                                    </select>
+                                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ServiceId" class="form-label">Dịch vụ</label>
+                                    <select asp-for="ServiceId" class="form-control" asp-items="@(new SelectList(ViewBag.ServiceId, "ServiceId", "ServiceName"))">
+                                        <option value="">-- Chọn dịch vụ --</option>
+                                    </select>
+                                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BookingDate" class="form-label">Ngày đặt</label>
+                                    <input asp-for="BookingDate" class="form-control" type="date" />
+                                    <span asp-validation-for="BookingDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ServiceDate" class="form-label">Ngày sử dụng dịch vụ</label>
+                                    <input asp-for="ServiceDate" class="form-control" type="date" />
+                                    <span asp-validation-for="ServiceDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Quantity" class="form-label">Số lượng</label>
+                                    <input asp-for="Quantity" class="form-control" type="number" min="1" value="1" />
+                                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Đơn giá</label>
+                                    <input type="text" id="unit-price" class="form-control" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt</label>
+                            <textarea asp-for="SpecialRequests" class="form-control" rows="4" placeholder="Vui lòng cho chúng tôi biết nếu bạn có yêu cầu đặc biệt..."></textarea>
+                            <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                <i class="fa fa-calendar-check"></i> Đặt dịch vụ ngay
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="service-summary">
+                    <h4>Tóm tắt đặt dịch vụ</h4>
+                    <div class="summary-item">
+                        <span>Dịch vụ:</span>
+                        <span id="service-info">Chưa chọn dịch vụ</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Ngày đặt:</span>
+                        <span id="booking-date-info">--/--/----</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Ngày sử dụng:</span>
+                        <span id="service-date-info">--/--/----</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Số lượng:</span>
+                        <span id="quantity-info">1</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Đơn giá:</span>
+                        <span id="unit-price-info">0 VNĐ</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Tổng tiền:</span>
+                        <span id="total-amount">0 VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="service-policy">
+                    <h5>Chính sách dịch vụ</h5>
+                    <ul>
+                        <li>Hủy miễn phí trước 2h</li>
+                        <li>Thanh toán tại chỗ</li>
+                        <li>Dịch vụ 24/7</li>
+                        <li>Chất lượng đảm bảo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates
+            const today = new Date();
+            document.querySelector('input[name="BookingDate"]').value = today.toISOString().split('T')[0];
+            document.querySelector('input[name="ServiceDate"]').value = today.toISOString().split('T')[0];
+
+            // Service data for calculation
+            const serviceData = @Html.Raw(Json.Serialize(ViewBag.ServiceId));
+
+            // Update summary when service, quantity, or dates change
+            function updateSummary() {
+                const serviceId = document.querySelector('select[name="ServiceId"]').value;
+                const quantity = parseInt(document.querySelector('input[name="Quantity"]').value) || 1;
+                const bookingDate = document.querySelector('input[name="BookingDate"]').value;
+                const serviceDate = document.querySelector('input[name="ServiceDate"]').value;
+
+                if (serviceId) {
+                    const service = serviceData.find(s => s.value == serviceId);
+                    if (service) {
+                        document.getElementById('service-info').textContent = service.text;
+                        document.getElementById('unit-price-info').textContent = service.unitPrice + ' VNĐ';
+                        document.getElementById('unit-price').value = service.unitPrice + ' VNĐ';
+                        
+                        const total = service.unitPrice * quantity;
+                        document.getElementById('total-amount').textContent = total.toLocaleString() + ' VNĐ';
+                    }
+                } else {
+                    document.getElementById('service-info').textContent = 'Chưa chọn dịch vụ';
+                    document.getElementById('unit-price-info').textContent = '0 VNĐ';
+                    document.getElementById('unit-price').value = '';
+                    document.getElementById('total-amount').textContent = '0 VNĐ';
+                }
+
+                document.getElementById('quantity-info').textContent = quantity;
+                document.getElementById('booking-date-info').textContent = formatDate(bookingDate);
+                document.getElementById('service-date-info').textContent = formatDate(serviceDate);
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return '--/--/----';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('vi-VN');
+            }
+
+            // Add event listeners
+            document.querySelector('select[name="ServiceId"]').addEventListener('change', updateSummary);
+            document.querySelector('input[name="Quantity"]').addEventListener('input', updateSummary);
+            document.querySelector('input[name="BookingDate"]').addEventListener('change', updateSummary);
+            document.querySelector('input[name="ServiceDate"]').addEventListener('change', updateSummary);
+
+            // Initial update
+            updateSummary();
+        });
+    </script>
+}

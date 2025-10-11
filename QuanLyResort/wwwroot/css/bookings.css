@@ -1,0 +1,372 @@
+/**
+ * Bookings Management Styles
+ * Custom styling for booking-related components
+ */
+
+/* Booking Cards */
+.booking-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.booking-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.booking-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.booking-card .card-body {
+    padding: 1.5rem;
+}
+
+/* Booking Info */
+.booking-info-list .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.booking-info-list .info-item:last-child {
+    border-bottom: none;
+}
+
+.booking-info-list .info-item .label {
+    font-weight: 600;
+    color: #666;
+    min-width: 150px;
+}
+
+.booking-info-list .info-item .value {
+    color: #333;
+    text-align: right;
+}
+
+/* Status Badges */
+.booking-status .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-confirmed {
+    background-color: #198754;
+    color: #fff;
+}
+
+.status-checkedin {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.status-checkedout {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Action Buttons */
+.booking-actions .btn {
+    margin: 0.25rem;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.booking-actions .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.booking-actions .btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* DataTable Customizations */
+#bookingsTable {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#bookingsTable thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+#bookingsTable tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+#bookingsTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Booking Form */
+.booking-form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.booking-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.booking-form .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.booking-form .form-control,
+.booking-form .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.booking-form .form-control:focus,
+.booking-form .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Booking Summary */
+.booking-summary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.booking-summary h4 {
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item.total {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Booking Policy */
+.booking-policy {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid #28a745;
+}
+
+.booking-policy h5 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.booking-policy ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.booking-policy li {
+    padding: 0.25rem 0;
+    color: #666;
+}
+
+.booking-policy li:before {
+    content: "✓";
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+}
+
+.empty-state .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h4 {
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.empty-state p {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1055;
+}
+
+.toast {
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .booking-form {
+        padding: 1rem;
+    }
+    
+    .booking-summary {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .booking-actions .btn {
+        margin: 0.125rem;
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .info-item .label {
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-item .value {
+        text-align: left;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-actions {
+        text-align: center;
+    }
+    
+    .booking-actions .btn {
+        display: block;
+        width: 100%;
+        margin: 0.25rem 0;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    #bookingsTable th,
+    #bookingsTable td {
+        padding: 0.5rem 0.25rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Print Styles */
+@media print {
+    .booking-actions,
+    .btn,
+    .dropdown {
+        display: none !important;
+    }
+    
+    .booking-card {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+    
+    .card-header {
+        background: #f8f9fa !important;
+        color: #000 !important;
+    }
+}

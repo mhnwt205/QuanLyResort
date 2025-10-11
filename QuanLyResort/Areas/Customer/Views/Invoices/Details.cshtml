@@ -1,0 +1,159 @@
+@model QuanLyResort.ViewModels.InvoiceDto
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Chi tiết hóa đơn";
+}
+
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Chi tiết hóa đơn</h1>
+                    <p>Hóa đơn: @Model.InvoiceNumber</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="invoice-details-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">Thông tin hóa đơn</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="fw-semibold">Số hóa đơn:</td>
+                                <td><span class="badge bg-primary">@Model.InvoiceNumber</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Trạng thái:</td>
+                                <td>
+                                    @switch (Model.Status)
+                                    {
+                                        case "draft": <span class="badge bg-warning">Nháp</span>; break;
+                                        case "approved": <span class="badge bg-success">Đã duyệt</span>; break;
+                                        case "paid": <span class="badge bg-primary">Đã thanh toán</span>; break;
+                                        case "partial": <span class="badge bg-info">Thanh toán một phần</span>; break;
+                                        case "cancelled": <span class="badge bg-danger">Đã hủy</span>; break;
+                                        default: <span class="badge bg-secondary">@Model.Status</span>; break;
+                                    }
+                                </td>
+                            </tr>
+                            <tr><td class="fw-semibold">Ngày hóa đơn:</td><td>@Model.InvoiceDate.ToString("dd/MM/yyyy")</td></tr>
+                            <tr><td class="fw-semibold">Ngày đến hạn:</td><td>@(Model.DueDate?.ToString("dd/MM/yyyy") ?? "Không có")</td></tr>
+                            <tr><td class="fw-semibold">Tổng tiền trước thuế:</td><td>@Model.Subtotal.ToString("N0") VNĐ</td></tr>
+                            <tr><td class="fw-semibold">Thuế VAT:</td><td>@Model.TaxAmount.ToString("N0") VNĐ</td></tr>
+                            <tr><td class="fw-semibold">Giảm giá:</td><td>@Model.DiscountAmount.ToString("N0") VNĐ</td></tr>
+                            <tr><td class="fw-semibold">Tổng tiền:</td><td><span class="fw-bold text-primary fs-5">@Model.TotalAmount.ToString("N0") VNĐ</span></td></tr>
+                            @if (!string.IsNullOrEmpty(Model.Notes))
+                            {
+                                <tr><td class="fw-semibold">Ghi chú:</td><td>@Model.Notes</td></tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+                @if (Model.InvoiceItems.Any())
+                {
+                    <div class="card mb-4">
+                        <div class="card-header"><h4 class="card-title mb-0">Chi tiết hóa đơn</h4></div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead><tr><th>Loại</th><th>Tên dịch vụ/sản phẩm</th><th>Mô tả</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var item in Model.InvoiceItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @switch (item.ItemType)
+                                                    {
+                                                        case "room": <span class="badge bg-primary">Phòng</span>; break;
+                                                        case "service": <span class="badge bg-info">Dịch vụ</span>; break;
+                                                        default: <span class="badge bg-secondary">@item.ItemType</span>; break;
+                                                    }
+                                                </td>
+                                                <td>@item.ItemName</td>
+                                                <td>@item.Description</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@item.UnitPrice.ToString("N0") VNĐ</td>
+                                                <td class="fw-bold">@item.TotalPrice.ToString("N0") VNĐ</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="fw-bold">
+                                            <td colspan="5" class="text-end">Tổng tiền:</td>
+                                            <td>@Model.TotalAmount.ToString("N0") VNĐ</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Payments.Any())
+                {
+                    <div class="card mb-4">
+                        <div class="card-header"><h4 class="card-title mb-0">Lịch sử thanh toán</h4></div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead><tr><th>Số thanh toán</th><th>Ngày thanh toán</th><th>Số tiền</th><th>Phương thức</th><th>Số tham chiếu</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var payment in Model.Payments)
+                                        {
+                                            <tr>
+                                                <td><span class="fw-semibold">@payment.PaymentNumber</span></td>
+                                                <td>@payment.PaymentDate.ToString("dd/MM/yyyy")</td>
+                                                <td class="@(payment.Amount < 0 ? "text-danger" : "fw-bold")">@payment.Amount.ToString("N0") VNĐ</td>
+                                                <td>
+                                                    @switch (payment.PaymentMethod)
+                                                    {
+                                                        case "cash": <span class="badge bg-primary">Tiền mặt</span>; break;
+                                                        case "card": <span class="badge bg-info">Thẻ</span>; break;
+                                                        case "transfer": <span class="badge bg-success">Chuyển khoản</span>; break;
+                                                        default: <span class="text-muted">@payment.PaymentMethod</span>; break;
+                                                    }
+                                                </td>
+                                                <td>@payment.ReferenceNumber</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-4">
+                <div class="booking-summary">
+                    <h4>Thông tin khách hàng</h4>
+                    <div class="summary-item"><span>Tên:</span><span>@Model.CustomerName</span></div>
+                </div>
+                <div class="booking-policy mt-4">
+                    <h5>Thao tác</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Quay lại</a>
+                        <a href="@Url.Action("Print", new { id = Model.InvoiceId })" class="btn btn-outline-primary" target="_blank">
+                            <i class="fa fa-print"></i> In hóa đơn
+                        </a>
+                        @if (Model.Status == "approved" && Model.Status != "paid")
+                        {
+                            <a href="@Url.Action("Create", "Payments", new { area = "Customer", invoiceId = Model.InvoiceId })" class="btn btn-success">
+                                <i class="fa fa-credit-card"></i> Thanh toán
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,217 @@
+@model QuanLyResort.ViewModels.CreateBookingDto
+
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Đặt phòng - Resort Deluxe";
+}
+
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Đặt phòng</h1>
+                    <p>Đặt phòng nghỉ dưỡng tại Resort Deluxe</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Form Section -->
+<section class="booking-form-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="booking-form">
+                    <h3>Thông tin đặt phòng</h3>
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CustomerId" class="form-label">Khách hàng *</label>
+                                    <select asp-for="CustomerId" class="form-control" required>
+                                        <option value="">-- Chọn khách hàng --</option>
+                                        @foreach (var customer in ViewBag.Customers)
+                                        {
+                                            <option value="@customer.CustomerId">@customer.FirstName @customer.LastName - @customer.Phone</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="RoomId" class="form-label">Phòng</label>
+                                    <select asp-for="RoomId" class="form-control" id="roomSelect">
+                                        <option value="">-- Chọn phòng --</option>
+                                        @foreach (var room in ViewBag.Rooms)
+                                        {
+                                            <option value="@room.RoomId" data-price="@room.Price">@room.RoomNumber - @room.RoomType.TypeName - @room.Price.ToString("N0") VNĐ/đêm</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="RoomId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CheckInDate" class="form-label">Ngày nhận phòng *</label>
+                                    <input asp-for="CheckInDate" class="form-control" type="date" required />
+                                    <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CheckOutDate" class="form-label">Ngày trả phòng *</label>
+                                    <input asp-for="CheckOutDate" class="form-control" type="date" required />
+                                    <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Adults" class="form-label">Số người lớn *</label>
+                                    <input asp-for="Adults" type="number" min="1" max="10" class="form-control" required />
+                                    <span asp-validation-for="Adults" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Children" class="form-label">Số trẻ em</label>
+                                    <input asp-for="Children" type="number" min="0" max="10" class="form-control" />
+                                    <span asp-validation-for="Children" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt</label>
+                            <textarea asp-for="SpecialRequests" class="form-control" rows="4" placeholder="Vui lòng cho chúng tôi biết nếu bạn có yêu cầu đặc biệt..."></textarea>
+                            <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                <i class="fa fa-calendar-check"></i> Đặt phòng ngay
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="booking-summary">
+                    <h4>Tóm tắt đặt phòng</h4>
+                    <div class="summary-item">
+                        <span>Phòng:</span>
+                        <span id="room-info">Chưa chọn phòng</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Ngày nhận:</span>
+                        <span id="checkin-info">--/--/----</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Ngày trả:</span>
+                        <span id="checkout-info">--/--/----</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Số đêm:</span>
+                        <span id="nights-info">0 đêm</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Giá phòng:</span>
+                        <span id="room-price">0 VNĐ/đêm</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Tổng tiền:</span>
+                        <span id="total-amount">0 VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="booking-policy">
+                    <h5>Chính sách đặt phòng</h5>
+                    <ul>
+                        <li>Hủy miễn phí trước 24h</li>
+                        <li>Check-in: 14:00</li>
+                        <li>Check-out: 12:00</li>
+                        <li>Bao gồm bữa sáng</li>
+                        <li>WiFi miễn phí</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dayAfter = new Date(today);
+            dayAfter.setDate(dayAfter.getDate() + 2);
+            
+            document.querySelector('input[name="CheckInDate"]').value = tomorrow.toISOString().split('T')[0];
+            document.querySelector('input[name="CheckOutDate"]').value = dayAfter.toISOString().split('T')[0];
+
+            // Room data for calculation
+            const roomData = @Html.Raw(Json.Serialize(ViewBag.RoomId));
+
+            // Update summary when room or dates change
+            function updateSummary() {
+                const roomId = document.querySelector('select[name="RoomId"]').value;
+                const checkIn = document.querySelector('input[name="CheckInDate"]').value;
+                const checkOut = document.querySelector('input[name="CheckOutDate"]').value;
+
+                if (roomId && checkIn && checkOut) {
+                    const room = roomData.find(r => r.value == roomId);
+                    if (room) {
+                        document.getElementById('room-info').textContent = room.text;
+                        document.getElementById('room-price').textContent = room.price + ' VNĐ/đêm';
+                    }
+
+                    document.getElementById('checkin-info').textContent = formatDate(checkIn);
+                    document.getElementById('checkout-info').textContent = formatDate(checkOut);
+
+                    const nights = calculateNights(checkIn, checkOut);
+                    document.getElementById('nights-info').textContent = nights + ' đêm';
+
+                    if (room && nights > 0) {
+                        const total = room.price * nights;
+                        document.getElementById('total-amount').textContent = total.toLocaleString() + ' VNĐ';
+                    }
+                }
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('vi-VN');
+            }
+
+            function calculateNights(checkIn, checkOut) {
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                return Math.ceil(timeDiff / (1000 * 3600 * 24));
+            }
+
+            // Add event listeners
+            document.querySelector('select[name="RoomId"]').addEventListener('change', updateSummary);
+            document.querySelector('input[name="CheckInDate"]').addEventListener('change', updateSummary);
+            document.querySelector('input[name="CheckOutDate"]').addEventListener('change', updateSummary);
+
+            // Initial update
+            updateSummary();
+        });
+    </script>
+}

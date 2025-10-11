@@ -1,0 +1,169 @@
+@model QuanLyResort.ViewModels.BookingViewModel
+
+<div class="booking-actions">
+    @switch (Model.Status)
+    {
+        case "pending":
+            <div class="d-flex flex-wrap gap-2">
+                <form asp-action="Confirm" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+                    <input type="hidden" name="roomId" value="@Model.RoomId" />
+                    <button type="submit" class="btn btn-success btn-sm" 
+                            onclick="return confirm('Xác nhận đặt phòng này?')">
+                        <i class="bx bx-check"></i> Xác nhận
+                    </button>
+                </form>
+                @if (!Model.RoomId.HasValue)
+                {
+                    <button type="button" class="btn btn-warning btn-sm" 
+                            data-bs-toggle="modal" data-bs-target="#assignRoomModal" 
+                            data-booking-id="@Model.BookingId">
+                        <i class="bx bx-home"></i> Gán phòng
+                    </button>
+                }
+                <form asp-action="Delete" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+                    <button type="submit" class="btn btn-danger btn-sm" 
+                            onclick="return confirm('Hủy đặt phòng này?')">
+                        <i class="bx bx-x"></i> Hủy
+                    </button>
+                </form>
+            </div>
+            break;
+            
+        case "confirmed":
+            <div class="d-flex flex-wrap gap-2">
+                <form asp-action="CheckIn" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+                    <button type="submit" class="btn btn-primary btn-sm" 
+                            onclick="return confirm('Thực hiện check-in?')">
+                        <i class="bx bx-log-in"></i> Check-in
+                    </button>
+                </form>
+                @if (!Model.RoomId.HasValue)
+                {
+                    <button type="button" class="btn btn-warning btn-sm" 
+                            data-bs-toggle="modal" data-bs-target="#assignRoomModal" 
+                            data-booking-id="@Model.BookingId">
+                        <i class="bx bx-home"></i> Gán phòng
+                    </button>
+                }
+                <form asp-action="Delete" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+                    <button type="submit" class="btn btn-danger btn-sm" 
+                            onclick="return confirm('Hủy đặt phòng này?')">
+                        <i class="bx bx-x"></i> Hủy
+                    </button>
+                </form>
+            </div>
+            break;
+            
+        case "checkedin":
+            <div class="d-flex flex-wrap gap-2">
+                <form asp-action="CheckOut" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+                    <button type="submit" class="btn btn-info btn-sm" 
+                            onclick="return confirm('Thực hiện check-out?')">
+                        <i class="bx bx-log-out"></i> Check-out
+                    </button>
+                </form>
+            </div>
+            break;
+            
+        case "checkedout":
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-success">
+                    <i class="bx bx-check-circle"></i> Hoàn thành
+                </span>
+            </div>
+            break;
+            
+        case "cancelled":
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-danger">
+                    <i class="bx bx-x-circle"></i> Đã hủy
+                </span>
+            </div>
+            break;
+            
+        default:
+            <span class="badge bg-secondary">@Model.Status</span>
+            break;
+    }
+</div>
+
+<!-- Assign Room Modal -->
+<div class="modal fade" id="assignRoomModal" tabindex="-1" aria-labelledby="assignRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignRoomModalLabel">Gán phòng cho đặt phòng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AssignRoom" method="post" id="assignRoomForm">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="assignBookingId" />
+                    <div class="mb-3">
+                        <label for="assignRoomSelect" class="form-label">Chọn phòng *</label>
+                        <select name="roomId" id="assignRoomSelect" class="form-select" required>
+                            <option value="">-- Chọn phòng --</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle"></i>
+                        <small>Chỉ hiển thị các phòng có sẵn trong khoảng thời gian đặt phòng.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Gán phòng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle assign room modal
+    $('#assignRoomModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var bookingId = button.data('booking-id');
+        var modal = $(this);
+        
+        modal.find('#assignBookingId').val(bookingId);
+        
+        // Load available rooms for this booking
+        loadAvailableRooms(bookingId);
+    });
+    
+    function loadAvailableRooms(bookingId) {
+        // Get booking details first to get check-in/check-out dates
+        $.get('@Url.Action("GetBookingDetails", "Bookings")', { id: bookingId })
+            .done(function(data) {
+                if (data.success) {
+                    // Load available rooms for the date range
+                    $.get('@Url.Action("GetAvailableRooms", "Bookings")', {
+                        checkIn: data.checkInDate,
+                        checkOut: data.checkOutDate
+                    })
+                    .done(function(rooms) {
+                        var select = $('#assignRoomSelect');
+                        select.empty();
+                        select.append('<option value="">-- Chọn phòng --</option>');
+                        
+                        rooms.forEach(function(room) {
+                            select.append('<option value="' + room.roomId + '">' + 
+                                room.roomNumber + ' - ' + room.roomType + 
+                                ' (' + room.price.toLocaleString() + ' VNĐ/đêm)</option>');
+                        });
+                    })
+                    .fail(function() {
+                        alert('Không thể tải danh sách phòng có sẵn.');
+                    });
+                }
+            })
+            .fail(function() {
+                alert('Không thể tải thông tin đặt phòng.');
+            });
+    }
+</script>

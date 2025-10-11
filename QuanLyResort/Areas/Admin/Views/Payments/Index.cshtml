@@ -1,0 +1,150 @@
+@model IEnumerable<QuanLyResort.ViewModels.PaymentViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản lý thanh toán";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Quản lý thanh toán</h4>
+        <a href="@Url.Action("Create", "Payments", new { area = "Admin" })" class="btn btn-primary">
+            <i class="bx bx-plus"></i> Tạo thanh toán mới
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="paymentsTable">
+                    <thead>
+                        <tr>
+                            <th>Số thanh toán</th>
+                            <th>Hóa đơn</th>
+                            <th>Ngày thanh toán</th>
+                            <th>Số tiền</th>
+                            <th>Phương thức</th>
+                            <th>Số tham chiếu</th>
+                            <th>Người xử lý</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payment in Model)
+                        {
+                            <tr data-payment-id="@payment.PaymentId">
+                                <td>
+                                    <span class="fw-semibold">@payment.PaymentNumber</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-label-info">#@payment.InvoiceId</span>
+                                </td>
+                                <td>@payment.PaymentDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="fw-semibold @(payment.Amount < 0 ? "text-danger" : "")">
+                                        @payment.Amount.ToString("N0") VNĐ
+                                    </span>
+                                    @if (payment.Amount < 0)
+                                    {
+                                        <br><small class="text-muted">Hoàn tiền</small>
+                                    }
+                                </td>
+                                <td>
+                                    @switch (payment.PaymentMethod)
+                                    {
+                                        case "cash":
+                                            <span class="badge bg-label-primary">Tiền mặt</span>
+                                            break;
+                                        case "card":
+                                            <span class="badge bg-label-info">Thẻ</span>
+                                            break;
+                                        case "transfer":
+                                            <span class="badge bg-label-success">Chuyển khoản</span>
+                                            break;
+                                        default:
+                                            <span class="text-muted">@payment.PaymentMethod</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(payment.ReferenceNumber))
+                                    {
+                                        <span class="text-muted">@payment.ReferenceNumber</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>@payment.ProcessedBy</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="@Url.Action("Details", new { id = payment.PaymentId })">
+                                                <i class="bx bx-show me-1"></i> Chi tiết
+                                            </a>
+                                            <a class="dropdown-item" href="@Url.Action("Print", new { id = payment.PaymentId })" target="_blank">
+                                                <i class="bx bx-printer me-1"></i> In biên lai
+                                            </a>
+                                            @if (payment.Amount > 0)
+                                            {
+                                                <a class="dropdown-item text-warning" href="@Url.Action("Refund", new { id = payment.PaymentId })">
+                                                    <i class="bx bx-undo me-1"></i> Hoàn tiền
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bx bx-credit-card" style="font-size: 4rem; color: #ccc;"></i>
+            <h5 class="mt-3 text-muted">Chưa có thanh toán nào</h5>
+            <p class="text-muted">Hãy tạo thanh toán đầu tiên để bắt đầu quản lý.</p>
+            <a href="@Url.Action("Create", "Payments", new { area = "Admin" })" class="btn btn-primary">
+                <i class="bx bx-plus"></i> Tạo thanh toán mới
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#paymentsTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                },
+                "order": [[0, "desc"]],
+                "pageLength": 25,
+                "responsive": true
+            });
+        });
+    </script>
+}

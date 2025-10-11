@@ -1,0 +1,143 @@
+@model IEnumerable<QuanLyResort.ViewModels.BookingViewModel>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản lý đặt phòng";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Danh sách đặt phòng</h5>
+                    <a href="@Url.Action("Create")" class="btn btn-primary">
+                        <i class="bx bx-plus"></i>Tạo đặt phòng mới
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle" id="bookingsTable">
+                            <thead>
+                                <tr>
+                                    <th>Mã đặt phòng</th>
+                                    <th>Khách hàng</th>
+                                    <th>Phòng</th>
+                                    <th>Ngày nhận</th>
+                                    <th>Ngày trả</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="fw-semibold">@booking.BookingCode</span>
+                                        </td>
+                                        <td>@booking.CustomerName</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(booking.RoomNumber))
+                                            {
+                                                <span class="badge bg-label-info">@booking.RoomNumber</span>
+                                                <br>
+                                                <small class="text-muted">@booking.RoomType</small>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa gán phòng</span>
+                                            }
+                                        </td>
+                                        <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <span class="fw-semibold">@booking.TotalAmount.ToString("N0") VNĐ</span>
+                                        </td>
+                                        <td>
+                                            @switch (booking.Status)
+                                            {
+                                                case "pending":
+                                                    <span class="badge bg-label-warning">Chờ duyệt</span>
+                                                    break;
+                                                case "confirmed":
+                                                    <span class="badge bg-label-success">Đã xác nhận</span>
+                                                    break;
+                                                case "checkedin":
+                                                    <span class="badge bg-label-primary">Đã nhận phòng</span>
+                                                    break;
+                                                case "checkedout":
+                                                    <span class="badge bg-label-info">Đã trả phòng</span>
+                                                    break;
+                                                case "cancelled":
+                                                    <span class="badge bg-label-danger">Đã hủy</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-label-secondary">@booking.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="@Url.Action("Details", new { id = booking.BookingId })">
+                                                        <i class="bx bx-show"></i>Chi tiết
+                                                    </a>
+                                                    @if (booking.Status == "pending")
+                                                    {
+                                                        <a class="dropdown-item" href="@Url.Action("Edit", new { id = booking.BookingId })">
+                                                            <i class="bx bx-edit"></i>Chỉnh sửa
+                                                        </a>
+                                                    }
+                                                    @if (booking.Status == "pending" || booking.Status == "confirmed")
+                                                    {
+                                                        <a class="dropdown-item text-danger" href="@Url.Action("Delete", new { id = booking.BookingId })">
+                                                            <i class="bx bx-trash"></i>Hủy
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#bookingsTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                },
+                "order": [[0, "desc"]],
+                "pageLength": 25,
+                "responsive": true
+            });
+        });
+    </script>
+}

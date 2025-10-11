@@ -1,0 +1,171 @@
+@model QuanLyResort.ViewModels.CreatePaymentDto
+
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Thanh toán hóa đơn";
+}
+
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Thanh toán hóa đơn</h1>
+                    <p>Thực hiện thanh toán cho hóa đơn của bạn</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="payment-form-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">Thông tin thanh toán</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Create" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="InvoiceId" class="form-label">Hóa đơn *</label>
+                                        <select asp-for="InvoiceId" class="form-select" id="invoiceSelect">
+                                            <option value="">-- Chọn hóa đơn --</option>
+                                            @foreach (var invoice in ViewBag.Invoices)
+                                            {
+                                                <option value="@invoice.InvoiceId" 
+                                                        data-customer="@(invoice.Customer?.FirstName + " " + invoice.Customer?.LastName)"
+                                                        data-total="@invoice.TotalAmount">
+                                                    @invoice.InvoiceNumber - @(invoice.Customer?.FirstName + " " + invoice.Customer?.LastName) - @invoice.TotalAmount.ToString("N0") VNĐ
+                                                </option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="InvoiceId" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="PaymentDate" class="form-label">Ngày thanh toán *</label>
+                                        <input asp-for="PaymentDate" class="form-control" type="date" />
+                                        <span asp-validation-for="PaymentDate" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="Amount" class="form-label">Số tiền *</label>
+                                        <input asp-for="Amount" class="form-control" type="number" step="0.01" id="amountInput" />
+                                        <span asp-validation-for="Amount" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán *</label>
+                                        <select asp-for="PaymentMethod" class="form-select">
+                                            <option value="">-- Chọn phương thức --</option>
+                                            <option value="cash">Tiền mặt</option>
+                                            <option value="card">Thẻ</option>
+                                            <option value="transfer">Chuyển khoản</option>
+                                        </select>
+                                        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ReferenceNumber" class="form-label">Số tham chiếu</label>
+                                <input asp-for="ReferenceNumber" class="form-control" placeholder="Số thẻ, mã giao dịch..." />
+                                <span asp-validation-for="ReferenceNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Notes" class="form-label">Ghi chú</label>
+                                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Ghi chú về thanh toán..."></textarea>
+                                <span asp-validation-for="Notes" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-credit-card"></i> Gửi thanh toán
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Thông tin hóa đơn</h5>
+                    </div>
+                    <div class="card-body" id="invoice-info">
+                        <p class="text-muted">Chọn hóa đơn để xem thông tin chi tiết</p>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Hướng dẫn</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-check text-success me-2"></i> Chọn hóa đơn cần thanh toán</li>
+                            <li><i class="fa fa-check text-success me-2"></i> Nhập số tiền thanh toán</li>
+                            <li><i class="fa fa-check text-success me-2"></i> Chọn phương thức thanh toán</li>
+                            <li><i class="fa fa-check text-success me-2"></i> Nhập số tham chiếu nếu có</li>
+                            <li><i class="fa fa-check text-success me-2"></i> Chúng tôi sẽ xác nhận và xử lý</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date
+            const today = new Date();
+            document.querySelector('input[name="PaymentDate"]').value = today.toISOString().split('T')[0];
+
+            // Handle invoice selection
+            document.getElementById('invoiceSelect').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const invoiceInfo = document.getElementById('invoice-info');
+
+                if (this.value) {
+                    const customer = selectedOption.dataset.customer;
+                    const total = parseFloat(selectedOption.dataset.total);
+
+                    invoiceInfo.innerHTML = `
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="fw-semibold">Khách hàng:</td>
+                                <td>${customer}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Tổng tiền:</td>
+                                <td><span class="fw-bold">${total.toLocaleString('vi-VN')} VNĐ</span></td>
+                            </tr>
+                        </table>
+                    `;
+
+                    // Set default amount to total amount
+                    document.getElementById('amountInput').value = total.toFixed(2);
+                } else {
+                    invoiceInfo.innerHTML = '<p class="text-muted">Chọn hóa đơn để xem thông tin chi tiết</p>';
+                    document.getElementById('amountInput').value = '';
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,188 @@
+@model QuanLyResort.ViewModels.CreateInvoiceDto
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Tạo hóa đơn mới";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Tạo hóa đơn mới</h4>
+    <a href="@Url.Action("Index", "Invoices", new { area = "Admin" })" class="btn btn-secondary">
+        <i class="bx bx-arrow-back"></i> Quay lại
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Thông tin hóa đơn</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="CustomerId" class="form-label">Khách hàng *</label>
+                                <select asp-for="CustomerId" class="form-select" asp-items="@(new SelectList(ViewBag.Customers, "CustomerId", "FirstName"))">
+                                    <option value="">-- Chọn khách hàng --</option>
+                                </select>
+                                <span asp-validation-for="CustomerId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="BookingId" class="form-label">Mã đặt phòng</label>
+                                <select asp-for="BookingId" class="form-select" asp-items="@(new SelectList(ViewBag.Bookings, "BookingId", "BookingCode"))">
+                                    <option value="">-- Chọn đặt phòng --</option>
+                                </select>
+                                <span asp-validation-for="BookingId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="InvoiceDate" class="form-label">Ngày hóa đơn</label>
+                                <input asp-for="InvoiceDate" class="form-control" type="date" />
+                                <span asp-validation-for="InvoiceDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="DueDate" class="form-label">Ngày đến hạn</label>
+                                <input asp-for="DueDate" class="form-control" type="date" />
+                                <span asp-validation-for="DueDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="Subtotal" class="form-label">Tổng tiền trước thuế</label>
+                                <input asp-for="Subtotal" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="Subtotal" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="TaxAmount" class="form-label">Thuế VAT</label>
+                                <input asp-for="TaxAmount" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="TaxAmount" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="DiscountAmount" class="form-label">Giảm giá</label>
+                                <input asp-for="DiscountAmount" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="TotalAmount" class="form-label">Tổng tiền</label>
+                                <input asp-for="TotalAmount" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
+                                <select asp-for="PaymentMethod" class="form-select">
+                                    <option value="">-- Chọn phương thức --</option>
+                                    <option value="cash">Tiền mặt</option>
+                                    <option value="card">Thẻ</option>
+                                    <option value="transfer">Chuyển khoản</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Ghi chú</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-save"></i> Tạo hóa đơn
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Thông tin đặt phòng</h5>
+            </div>
+            <div class="card-body" id="booking-info">
+                <p class="text-muted">Chọn đặt phòng để xem thông tin chi tiết</p>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Hướng dẫn</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="bx bx-check text-success me-2"></i> Chọn khách hàng và đặt phòng</li>
+                    <li><i class="bx bx-check text-success me-2"></i> Hệ thống sẽ tự động tính tổng tiền</li>
+                    <li><i class="bx bx-check text-success me-2"></i> Có thể điều chỉnh thuế và giảm giá</li>
+                    <li><i class="bx bx-check text-success me-2"></i> Hóa đơn sẽ được tạo ở trạng thái "Nháp"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates
+            const today = new Date();
+            document.querySelector('input[name="InvoiceDate"]').value = today.toISOString().split('T')[0];
+            
+            const dueDate = new Date(today);
+            dueDate.setDate(dueDate.getDate() + 7);
+            document.querySelector('input[name="DueDate"]').value = dueDate.toISOString().split('T')[0];
+
+            // Auto calculate total when subtotal, tax, or discount changes
+            function calculateTotal() {
+                const subtotal = parseFloat(document.querySelector('input[name="Subtotal"]').value) || 0;
+                const tax = parseFloat(document.querySelector('input[name="TaxAmount"]').value) || 0;
+                const discount = parseFloat(document.querySelector('input[name="DiscountAmount"]').value) || 0;
+                const total = subtotal + tax - discount;
+                document.querySelector('input[name="TotalAmount"]').value = total.toFixed(2);
+            }
+
+            document.querySelector('input[name="Subtotal"]').addEventListener('input', calculateTotal);
+            document.querySelector('input[name="TaxAmount"]').addEventListener('input', calculateTotal);
+            document.querySelector('input[name="DiscountAmount"]').addEventListener('input', calculateTotal);
+
+            // Load booking info when booking is selected
+            document.querySelector('select[name="BookingId"]').addEventListener('change', function() {
+                const bookingId = this.value;
+                if (bookingId) {
+                    // In a real application, you would make an AJAX call to get booking details
+                    document.getElementById('booking-info').innerHTML = '<p class="text-info">Đang tải thông tin đặt phòng...</p>';
+                } else {
+                    document.getElementById('booking-info').innerHTML = '<p class="text-muted">Chọn đặt phòng để xem thông tin chi tiết</p>';
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,128 @@
+@model IEnumerable<QuanLyResort.ViewModels.BookingViewModel>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped" id="bookingsTable">
+            <thead>
+                <tr>
+                    <th>Mã đặt phòng</th>
+                    <th>Khách hàng</th>
+                    <th>Phòng</th>
+                    <th>Ngày nhận</th>
+                    <th>Ngày trả</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr data-booking-id="@booking.BookingId">
+                        <td>
+                            <span class="fw-semibold">@booking.BookingCode</span>
+                        </td>
+                        <td>@booking.CustomerName</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(booking.RoomNumber))
+                            {
+                                <span class="badge bg-label-info">@booking.RoomNumber</span>
+                                <br>
+                                <small class="text-muted">@booking.RoomType</small>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa gán phòng</span>
+                            }
+                        </td>
+                        <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                        <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <span class="fw-semibold">@booking.TotalAmount.ToString("N0") VNĐ</span>
+                        </td>
+                        <td>
+                            @switch (booking.Status)
+                            {
+                                case "pending":
+                                    <span class="badge bg-label-warning">Chờ duyệt</span>
+                                    break;
+                                case "confirmed":
+                                    <span class="badge bg-label-success">Đã xác nhận</span>
+                                    break;
+                                case "checkedin":
+                                    <span class="badge bg-label-primary">Đã nhận phòng</span>
+                                    break;
+                                case "checkedout":
+                                    <span class="badge bg-label-info">Đã trả phòng</span>
+                                    break;
+                                case "cancelled":
+                                    <span class="badge bg-label-danger">Đã hủy</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-label-secondary">@booking.Status</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="@Url.Action("Details", new { id = booking.BookingId })">
+                                        <i class="bx bx-show me-1"></i> Chi tiết
+                                    </a>
+                                    @if (booking.Status == "pending")
+                                    {
+                                        <a class="dropdown-item" href="@Url.Action("Edit", new { id = booking.BookingId })">
+                                            <i class="bx bx-edit me-1"></i> Chỉnh sửa
+                                        </a>
+                                    }
+                                    @if (booking.Status == "pending" || booking.Status == "confirmed")
+                                    {
+                                        <a class="dropdown-item text-danger" href="@Url.Action("Delete", new { id = booking.BookingId })">
+                                            <i class="bx bx-trash me-1"></i> Hủy
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTables if not already initialized
+            if (!$.fn.DataTable.isDataTable('#bookingsTable')) {
+                $('#bookingsTable').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                    },
+                    "order": [[0, "desc"]],
+                    "pageLength": 25,
+                    "responsive": true,
+                    "columnDefs": [
+                        { "orderable": false, "targets": 7 } // Disable sorting on actions column
+                    ]
+                });
+            }
+        });
+    </script>
+}
+else
+{
+    <div class="text-center py-5">
+        <div class="empty-state">
+            <i class="bx bx-calendar-x bx-lg text-muted mb-3"></i>
+            <h5 class="text-muted">Chưa có đặt phòng nào</h5>
+            <p class="text-muted">Hiện tại chưa có đặt phòng nào trong hệ thống.</p>
+            <a href="@Url.Action("Create")" class="btn btn-primary">
+                <i class="bx bx-plus"></i> Tạo đặt phòng đầu tiên
+            </a>
+        </div>
+    </div>
+}

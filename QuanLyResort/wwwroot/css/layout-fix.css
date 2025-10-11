@@ -1,0 +1,700 @@
+/* ================================================
+   LAYOUT FIX - DELUXE HOTEL SPACING & ALIGNMENT
+   Brand Color: #b48b57 (Brown Gold)
+   ================================================ */
+
+:root {
+    --brand-color: #b48b57;
+    --brand-color-dark: #9a6640;
+    --brand-color-light: #c9a277;
+}
+
+/* ========== BUTTON IMPROVEMENTS ========== */
+.btn,
+.btn-custom,
+.btn-primary,
+input[type="submit"].btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    border: none !important;
+}
+
+/* Button icon spacing - 8px */
+.btn i,
+.btn span[class^="icon-"],
+.btn-custom i,
+.btn-custom span[class^="icon-"] {
+    margin-right: 0 !important; /* Gap handles spacing */
+}
+
+/* Button to button spacing - 12-16px */
+.btn + .btn,
+.btn-custom + .btn-custom,
+a.btn + a.btn {
+    margin-left: 14px !important;
+}
+
+/* Primary button - Brand color */
+.btn-primary,
+.btn-custom {
+    background: linear-gradient(135deg, var(--brand-color) 0%, var(--brand-color-dark) 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(181, 124, 87, 0.25) !important;
+}
+
+.btn-primary:hover,
+.btn-custom:hover {
+    background: linear-gradient(135deg, var(--brand-color-dark) 0%, #7d4f2e 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(181, 124, 87, 0.35) !important;
+    color: white !important;
+}
+
+/* Search button specific */
+input[type="submit"].btn-primary {
+    width: 100% !important;
+    padding: 14px 24px !important;
+}
+
+/* Small buttons */
+.btn-sm {
+    padding: 8px 18px !important;
+    font-size: 0.9rem !important;
+}
+
+/* ========== ROOM CARDS ========== */
+.room {
+    margin-bottom: 2rem !important; /* 32px gap between room cards */
+    transition: all 0.3s ease !important;
+}
+
+.room:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Room card text section - increase padding */
+.room .text {
+    padding: 20px !important; /* 16-20px as requested */
+}
+
+/* Image to text spacing in room cards - 16px */
+.room .img {
+    margin-bottom: 0 !important;
+}
+
+.room hr {
+    margin: 16px 0 !important; /* 16px spacing above buttons */
+}
+
+/* Room card buttons */
+.room .btn-custom,
+.room a.btn {
+    margin-top: 12px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+/* Multiple buttons in room card */
+.room .btn + .btn,
+.room a.btn + a.btn {
+    margin-top: 12px !important;
+    margin-left: 0 !important;
+}
+
+/* D-grid gap for buttons */
+.d-grid.gap-2 {
+    gap: 12px !important;
+}
+
+/* ========== FORM CONTROLS ========== */
+.form-control,
+input.form-control,
+select.form-control,
+textarea.form-control {
+    padding: 12px 14px !important; /* Exact as requested */
+    border-radius: 8px !important;
+    border: 1.5px solid #ddd !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-control:focus {
+    border-color: var(--brand-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(181, 124, 87, 0.15) !important;
+    outline: none !important;
+}
+
+/* Form group spacing - 16px */
+.form-group {
+    margin-bottom: 16px !important;
+}
+
+/* Contact form specific */
+.contact-form .form-group {
+    margin-bottom: 20px !important;
+}
+
+/* Submit button in contact form - 24px spacing */
+.contact-form .form-group:last-child {
+    margin-top: 24px !important;
+    margin-bottom: 0 !important;
+}
+
+/* Contact form padding */
+.contact-form {
+    padding: 32px !important;
+    border-radius: 12px !important;
+}
+
+/* ========== CONTACT PAGE LAYOUT ========== */
+/* Map and form spacing - 32px */
+.block-9 .col-md-6 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+}
+
+.block-9 {
+    gap: 32px;
+    align-items: stretch !important; /* Equal height columns */
+    display: flex !important;
+    flex-wrap: nowrap !important;
+}
+
+.block-9 .col-md-6 {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important; /* Equal width */
+}
+
+/* Contact form - full height */
+.contact-form {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 500px !important; /* Match map height */
+}
+
+.contact-form .form-group:last-child {
+    margin-top: auto !important; /* Push submit button to bottom */
+}
+
+/* Map container */
+#map {
+    border-radius: 12px !important;
+    min-height: 500px !important;
+    height: 100% !important; /* Match form height */
+    flex: 1 !important;
+}
+
+/* Ensure form and map are side by side on desktop */
+@media (min-width: 768px) {
+    .block-9 {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+    }
+    
+    .block-9 .col-md-6 {
+        flex: 1 !important;
+        max-width: 50% !important;
+    }
+}
+
+/* Contact info boxes */
+.contact-info .info {
+    border-radius: 10px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ========== ABOUT PAGE - TEAM CARDS ========== */
+.block-2 {
+    margin-bottom: 24px !important;
+    height: 100% !important; /* Ensure full height */
+}
+
+/* Team member card - uniform height */
+.block-2 .flipper .front,
+.block-2 .flipper .back {
+    height: 400px !important; /* Increased height for consistency */
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Team card back content layout */
+.block-2 .back {
+    padding: 20px !important;
+    justify-content: space-between !important;
+}
+
+.block-2 .back h2 {
+    margin-bottom: 15px !important;
+}
+
+.block-2 .back p:first-of-type {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 3.5rem !important; /* Minimum height for description */
+    margin-bottom: 15px !important;
+}
+
+/* Button in team card - consistent positioning */
+.block-2 .back p:last-child {
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
+}
+
+.block-2 .btn {
+    margin-top: 0 !important;
+}
+
+/* ========== CARD BODY PADDING ========== */
+.card-body {
+    padding: 20px !important; /* 16-20px as requested */
+}
+
+/* Card to image spacing - 16px */
+.card img {
+    margin-bottom: 16px !important;
+}
+
+.card .text {
+    padding-top: 16px !important;
+}
+
+/* ========== SIDEBAR SPACING ========== */
+.sidebar .sidebar-wrap {
+    padding: 24px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+.sidebar .form-group {
+    margin-bottom: 20px !important;
+}
+
+/* Form button container - vertical stack */
+.sidebar .form-group .d-grid {
+    gap: 12px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    align-items: stretch !important;
+}
+
+.sidebar .form-group .btn {
+    width: 100% !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 48px !important;
+    line-height: 1.2 !important;
+    box-sizing: border-box !important;
+}
+
+/* Button text and icon spacing */
+.sidebar .form-group .btn i {
+    margin-right: 16px !important; /* Increased spacing between icon and text */
+    flex-shrink: 0 !important;
+    font-size: 14px !important;
+}
+
+/* Ensure both buttons have identical dimensions */
+.sidebar .form-group .btn-primary,
+.sidebar .form-group .btn-outline-secondary {
+    min-height: 48px !important;
+    max-height: 48px !important;
+    height: 48px !important;
+    line-height: 1.2 !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+/* ========== ICON ALIGNMENT ========== */
+/* Icons in buttons - vertical center */
+.btn i,
+.btn span[class^="icon-"],
+.btn span[class*=" icon-"] {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+/* Icons in text - increased spacing */
+.icon + span,
+i + span {
+    margin-left: 14px;
+}
+
+/* General button icon spacing */
+.btn i {
+    margin-right: 14px !important;
+}
+
+/* Specific spacing for different button types */
+.btn-primary i,
+.btn-secondary i,
+.btn-outline-primary i,
+.btn-outline-secondary i {
+    margin-right: 14px !important;
+}
+
+/* Extra spacing for buttons with longer text */
+.btn i + span,
+.btn i + text,
+.btn .fas + span,
+.btn .far + span,
+.btn .fab + span {
+    margin-left: 4px !important;
+}
+
+/* Force spacing for all button icons */
+.btn i {
+    display: inline-block !important;
+    margin-right: 14px !important;
+    width: auto !important;
+}
+
+/* ========== ROOM GRID SPACING ========== */
+/* Increase gap between room cards - 2rem (32px) */
+.ftco-section .row > [class*="col-"] {
+    margin-bottom: 2rem !important;
+}
+
+/* Ensure equal height columns */
+.ftco-section .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+}
+
+.ftco-section .row > [class*="col-"] {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Equal height for room cards */
+.room {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.room .text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.room .text .d-grid {
+    margin-top: auto; /* Push buttons to bottom */
+}
+
+/* Ensure consistent description height */
+.room .list li:last-child {
+    min-height: 2.5rem; /* Minimum height for description */
+}
+
+/* ========== GENERAL CARD IMPROVEMENTS ========== */
+/* Consistent card spacing and alignment */
+.card, .room, .block-2 {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+}
+
+.card:hover, .room:hover, .block-2:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Consistent button alignment */
+.btn-group, .d-grid {
+    margin-top: auto !important;
+}
+
+/* Icon alignment in buttons */
+.btn i, .btn span[class^="icon-"] {
+    vertical-align: middle !important;
+    line-height: 1 !important;
+}
+
+/* Form element spacing consistency */
+.form-group {
+    margin-bottom: 1.25rem !important;
+}
+
+.form-group:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* List item spacing */
+.list li {
+    margin-bottom: 0.5rem !important;
+    padding: 0.25rem 0 !important;
+}
+
+.list li:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .btn {
+        padding: 10px 20px !important;
+    }
+    
+    .room .text {
+        padding: 16px !important;
+    }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+    /* Buttons stack vertically with bottom margin */
+    .btn,
+    .btn-custom {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .btn + .btn {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Form buttons on mobile - ensure equal sizes */
+    .sidebar .form-group .btn {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        max-height: 44px !important;
+    }
+    
+    .sidebar .form-group .btn-primary,
+    .sidebar .form-group .btn-outline-secondary {
+        height: 44px !important;
+        min-height: 44px !important;
+        max-height: 44px !important;
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+    
+    /* Mobile icon spacing */
+    .sidebar .form-group .btn i {
+        margin-right: 12px !important;
+        font-size: 13px !important;
+    }
+    
+    /* General mobile button icon spacing */
+    .btn i {
+        margin-right: 12px !important;
+    }
+    
+    /* Room cards */
+    .room {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .room .text {
+        padding: 16px !important;
+    }
+    
+    /* Form controls */
+    .form-control {
+        padding: 10px 12px !important;
+    }
+    
+    /* Contact form and map - keep horizontal layout on tablet and desktop */
+    @media (min-width: 768px) {
+        .block-9 .col-md-6 {
+            margin-bottom: 0 !important;
+        }
+        
+        .block-9 .col-md-6:first-child,
+        .block-9 .col-md-6:last-child {
+            order: unset !important; /* Reset order on larger screens */
+        }
+    }
+    
+    /* Mobile only - stack vertically */
+    @media (max-width: 767px) {
+        .block-9 .col-md-6 {
+            margin-bottom: 24px !important;
+        }
+        
+        .block-9 .col-md-6:first-child {
+            order: 2 !important; /* Form appears after map on mobile */
+        }
+        
+        .block-9 .col-md-6:last-child {
+            order: 1 !important; /* Map appears first on mobile */
+        }
+        
+        #map {
+            min-height: 300px !important;
+            height: 300px !important; /* Fixed height on mobile */
+        }
+        
+        .contact-form {
+            height: auto !important; /* Auto height on mobile */
+        }
+    }
+    
+    /* Card body */
+    .card-body {
+        padding: 16px !important;
+    }
+    
+    /* Team cards */
+    .block-2 .flipper .front,
+    .block-2 .flipper .back {
+        height: 300px !important;
+    }
+}
+
+/* ========== DELUXE TEMPLATE OVERRIDES ========== */
+/* Fix existing Deluxe template spacing issues */
+
+/* Hero section breadcrumbs */
+.breadcrumbs a {
+    margin-right: 12px !important;
+}
+
+/* Price display */
+.price {
+    margin-right: 12px !important;
+    color: var(--brand-color) !important;
+    font-weight: 600 !important;
+}
+
+/* Service icons */
+.media.block-6 .icon {
+    margin-bottom: 16px !important;
+}
+
+.media.block-6 .media-body {
+    padding-top: 16px !important;
+}
+
+/* Block-7 service cards */
+.block-7 {
+    padding: 24px !important;
+    border-radius: 12px !important;
+    margin-bottom: 24px !important;
+}
+
+.block-7 .icon {
+    margin-bottom: 20px !important;
+}
+
+.block-7 h4 {
+    margin-bottom: 16px !important;
+}
+
+/* ========== UTILITIES ========== */
+.gap-custom-12 {
+    gap: 12px !important;
+}
+
+.gap-custom-16 {
+    gap: 16px !important;
+}
+
+.gap-custom-24 {
+    gap: 24px !important;
+}
+
+.gap-custom-32 {
+    gap: 32px !important;
+}
+
+.mt-custom-12 {
+    margin-top: 12px !important;
+}
+
+.mt-custom-16 {
+    margin-top: 16px !important;
+}
+
+.mt-custom-24 {
+    margin-top: 24px !important;
+}
+
+.mb-custom-16 {
+    margin-bottom: 16px !important;
+}
+
+.mb-custom-20 {
+    margin-bottom: 20px !important;
+}
+
+.mb-custom-24 {
+    margin-bottom: 24px !important;
+}
+
+.p-custom-20 {
+    padding: 20px !important;
+}
+
+/* ========== CONSISTENCY FIXES ========== */
+/* Ensure all buttons have same height */
+.btn,
+.btn-custom,
+.btn-primary,
+.btn-secondary {
+    min-height: 44px !important; /* Accessibility - minimum touch target */
+}
+
+/* Icon size consistency */
+.btn i,
+.btn span[class^="icon-"] {
+    font-size: 1.1em;
+}
+
+/* ========== HOVER STATES ========== */
+.room:hover .btn-custom {
+    transform: scale(1.02);
+}
+
+.block-2:hover {
+    transform: translateY(-4px);
+}
+
+/* ========== FOCUS STATES ========== */
+.form-control:focus,
+.btn:focus {
+    outline: 2px solid var(--brand-color) !important;
+    outline-offset: 2px;
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+    .btn,
+    .sidebar,
+    nav,
+    footer {
+        display: none !important;
+    }
+}
+

@@ -1,0 +1,197 @@
+@model IEnumerable<QuanLyResort.ViewModels.BookingViewModel>
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Lịch sử đặt phòng - Resort Deluxe";
+}
+
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header-content">
+                    <h1>Lịch sử đặt phòng</h1>
+                    <p>Xem và quản lý các đặt phòng của bạn</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bookings List Section -->
+<section class="bookings-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <div class="bookings-header d-flex justify-content-between align-items-center mb-4">
+                    <h3>Đặt phòng của bạn</h3>
+                    <a href="@Url.Action("Index", "Rooms", new { area = "Customer" })" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Đặt phòng mới
+                    </a>
+                </div>
+
+                @if (ViewBag.ShowSearchForm == true)
+                {
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Tra cứu đặt phòng</h5>
+                            <p class="text-muted">Nhập email hoặc số điện thoại để tra cứu đặt phòng của bạn</p>
+                            <form asp-action="Index" method="get" class="row g-3">
+                                <div class="col-md-5">
+                                    <label for="searchEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="searchEmail" name="searchEmail" placeholder="example@email.com">
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="searchPhone" class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="searchPhone" name="searchPhone" placeholder="0123456789">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fa fa-search"></i> Tra cứu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Any())
+                {
+                    <div class="bookings-list">
+                        @foreach (var booking in Model)
+                        {
+                            <div class="booking-card mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-8">
+                                                <div class="booking-info">
+                                                    <h5 class="booking-code">
+                                                        <i class="fa fa-ticket-alt"></i> @booking.BookingCode
+                                                    </h5>
+                                                    <div class="booking-details">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <p><strong>Khách hàng:</strong> @booking.CustomerName</p>
+                                                                @if (!string.IsNullOrEmpty(booking.RoomNumber))
+                                                                {
+                                                                    <p><strong>Phòng:</strong> @booking.RoomNumber (@booking.RoomType)</p>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p><strong>Phòng:</strong> <span class="text-muted">Chưa gán phòng</span></p>
+                                                                }
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <p><strong>Ngày nhận:</strong> @booking.CheckInDate.ToString("dd/MM/yyyy")</p>
+                                                                <p><strong>Ngày trả:</strong> @booking.CheckOutDate.ToString("dd/MM/yyyy")</p>
+                                                                <p><strong>Tổng tiền:</strong> <span class="text-primary fw-bold">@booking.TotalAmount.ToString("N0") VNĐ</span></p>
+                                                            </div>
+                                                        </div>
+                                                        @if (!string.IsNullOrEmpty(booking.SpecialRequests))
+                                                        {
+                                                            <p><strong>Yêu cầu đặc biệt:</strong> @booking.SpecialRequests</p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <div class="booking-status mb-3">
+                                                    @switch (booking.Status)
+                                                    {
+                                                        case "pending":
+                                                            <span class="badge bg-warning">Chờ duyệt</span>
+                                                            break;
+                                                        case "pending_payment":
+                                                            <span class="badge bg-warning">Chờ thanh toán</span>
+                                                            break;
+                                                        case "pending_deposit":
+                                                            <span class="badge bg-info">Chờ thanh toán cọc</span>
+                                                            break;
+                                                        case "confirmed":
+                                                            <span class="badge bg-success">Đã xác nhận</span>
+                                                            break;
+                                                        case "checkedin":
+                                                            <span class="badge bg-primary">Đã nhận phòng</span>
+                                                            break;
+                                                        case "checkedout":
+                                                            <span class="badge bg-info">Đã trả phòng</span>
+                                                            break;
+                                                        case "cancelled":
+                                                            <span class="badge bg-danger">Đã hủy</span>
+                                                            break;
+                                                        default:
+                                                            <span class="badge bg-secondary">@booking.Status</span>
+                                                            break;
+                                                    }
+                                                </div>
+                                                <div class="booking-actions">
+                                                    <a href="@Url.Action("Details", new { id = booking.BookingId })" class="btn btn-outline-primary btn-sm mb-1">
+                                                        <i class="fa fa-eye"></i> Chi tiết
+                                                    </a>
+                                                    @if (booking.RoomId.HasValue)
+                                                    {
+                                                        <a href="@Url.Action("Book", "OnlineBooking", new { area = "Customer", roomId = booking.RoomId.Value })" class="btn btn-outline-success btn-sm mb-1">
+                                                            <i class="fa fa-redo"></i> Đặt lại phòng
+                                                        </a>
+                                                    }
+                                                    @if (booking.Status == "pending" || booking.Status == "confirmed" || booking.Status == "pending_payment" || booking.Status == "pending_deposit")
+                                                    {
+                                                        <form asp-action="Cancel" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@booking.BookingId" />
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm mb-1" 
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')">
+                                                                <i class="fa fa-times"></i> Hủy
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state text-center py-5">
+                        <div class="empty-icon mb-4">
+                            <i class="fa fa-calendar-times fa-4x text-muted"></i>
+                        </div>
+                        <h4 class="text-muted">Chưa có đặt phòng nào</h4>
+                        <p class="text-muted">Bạn chưa có đặt phòng nào. Hãy tạo đặt phòng đầu tiên của bạn!</p>
+                        <a href="@Url.Action("Index", "Rooms", new { area = "Customer" })" class="btn btn-primary btn-lg">
+                            <i class="fa fa-plus"></i> Đặt phòng ngay
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut();
+        }, 5000);
+    </script>
+}

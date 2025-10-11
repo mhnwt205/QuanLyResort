@@ -1,0 +1,573 @@
+/* ================================================
+   UI FIX - UNIFIED DESIGN SYSTEM
+   Theme: Brown & White (#A57C49 accent)
+   Font: Poppins
+   Border Radius: 8-12px (forms), 25px (buttons)
+   ================================================ */
+
+/* ========== GLOBAL FONT ========== */
+* {
+    font-family: 'Poppins', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ========== COLOR VARIABLES ========== */
+:root {
+    --primary-brown: #b48b57;
+    --primary-brown-dark: #9a6640;
+    --primary-brown-light: #c9a277;
+    --white: #FFFFFF;
+    --light-bg: #FAF8F6;
+    --text-dark: #2C2C2C;
+    --text-muted: #6C757D;
+    --border-color: #E8E8E8;
+    --shadow-sm: 0 2px 10px rgba(180, 139, 87, 0.08);
+    --shadow-md: 0 4px 20px rgba(180, 139, 87, 0.12);
+    --shadow-lg: 0 8px 30px rgba(180, 139, 87, 0.16);
+}
+
+/* ========== BUTTON STANDARDIZATION ========== */
+.btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 10px 24px !important;
+    border-radius: 25px !important;
+    font-weight: 500 !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none !important;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Button spacing */
+.btn + .btn {
+    margin-left: 12px !important;
+}
+
+/* Button icon alignment */
+.btn i,
+.btn .bx,
+.btn .icon {
+    margin-right: 0 !important; /* Gap already handles spacing */
+    font-size: 1.1em;
+}
+
+/* Primary Button - Brown Theme */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%) !important;
+    color: var(--white) !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-brown-dark) 0%, #7d4f2e 100%) !important;
+    color: var(--white) !important;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: linear-gradient(135deg, #6C757D 0%, #5A6268 100%) !important;
+    color: var(--white) !important;
+}
+
+/* Outline Buttons */
+.btn-outline-primary {
+    background: transparent !important;
+    border: 2px solid var(--primary-brown) !important;
+    color: var(--primary-brown) !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-brown) !important;
+    color: var(--white) !important;
+}
+
+/* Success Button */
+.btn-success {
+    background: linear-gradient(135deg, #28A745 0%, #218838 100%) !important;
+    color: var(--white) !important;
+}
+
+/* Danger Button */
+.btn-danger {
+    background: linear-gradient(135deg, #DC3545 0%, #C82333 100%) !important;
+    color: var(--white) !important;
+}
+
+/* Info Button */
+.btn-info {
+    background: linear-gradient(135deg, #17A2B8 0%, #138496 100%) !important;
+    color: var(--white) !important;
+}
+
+/* Warning Button */
+.btn-warning {
+    background: linear-gradient(135deg, #FFC107 0%, #E0A800 100%) !important;
+    color: var(--text-dark) !important;
+}
+
+/* Small Button */
+.btn-sm {
+    padding: 6px 16px !important;
+    font-size: 0.875rem !important;
+}
+
+/* Large Button */
+.btn-lg {
+    padding: 14px 32px !important;
+    font-size: 1.1rem !important;
+}
+
+/* ========== FORM CONTROLS ========== */
+.form-control,
+.form-select {
+    padding: 12px 16px !important;
+    border-radius: 10px !important;
+    border: 1.5px solid var(--border-color) !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    background-color: var(--white) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-brown) !important;
+    box-shadow: 0 0 0 0.25rem rgba(165, 124, 73, 0.15) !important;
+    outline: none !important;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 20px !important;
+}
+
+/* Form Label */
+.form-label,
+label {
+    font-weight: 500 !important;
+    color: var(--text-dark) !important;
+    margin-bottom: 8px !important;
+    font-size: 0.95rem !important;
+}
+
+/* Textarea */
+textarea.form-control {
+    min-height: 120px !important;
+    resize: vertical !important;
+}
+
+/* ========== CARD & CONTAINER ========== */
+.card {
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: var(--shadow-sm) !important;
+    background-color: var(--white) !important;
+    overflow: hidden;
+    transition: all 0.3s ease !important;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%) !important;
+    color: var(--white) !important;
+    border-bottom: none !important;
+    padding: 16px 24px !important;
+    font-weight: 600 !important;
+}
+
+.card-body {
+    padding: 24px !important;
+}
+
+.card-footer {
+    background-color: var(--light-bg) !important;
+    border-top: 1px solid var(--border-color) !important;
+    padding: 16px 24px !important;
+}
+
+/* Form Container */
+.form-container {
+    padding: 32px !important;
+    border-radius: 12px !important;
+    background-color: var(--white) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* ========== TABLE IMPROVEMENTS ========== */
+.table {
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%) !important;
+    color: var(--white) !important;
+    font-weight: 600 !important;
+    padding: 14px 16px !important;
+    border: none !important;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table tbody td {
+    padding: 14px 16px !important;
+    vertical-align: middle !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(165, 124, 73, 0.04) !important;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Table wrapper */
+.table-responsive {
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+/* ========== BADGE STYLING ========== */
+.badge {
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+}
+
+.badge-primary,
+.bg-primary,
+.bg-label-primary {
+    background-color: var(--primary-brown) !important;
+    color: var(--white) !important;
+}
+
+/* ========== ALERT STYLING ========== */
+.alert {
+    border-radius: 10px !important;
+    border: none !important;
+    padding: 16px 20px !important;
+    margin-bottom: 20px !important;
+    box-shadow: var(--shadow-sm);
+}
+
+.alert i:first-child {
+    margin-right: 12px !important;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+    color: #155724 !important;
+    border-left: 4px solid #28A745 !important;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #721c24 !important;
+    border-left: 4px solid #DC3545 !important;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #856404 !important;
+    border-left: 4px solid #FFC107 !important;
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.1) !important;
+    color: #0c5460 !important;
+    border-left: 4px solid #17A2B8 !important;
+}
+
+/* ========== MODAL STYLING ========== */
+.modal-content {
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%) !important;
+    color: var(--white) !important;
+    border-bottom: none !important;
+    padding: 20px 24px !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.modal-body {
+    padding: 24px !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color) !important;
+    padding: 16px 24px !important;
+}
+
+/* ========== DROPDOWN STYLING ========== */
+.dropdown-menu {
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: var(--shadow-md) !important;
+    padding: 8px !important;
+}
+
+.dropdown-item {
+    border-radius: 8px !important;
+    padding: 10px 16px !important;
+    margin: 2px 0 !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(165, 124, 73, 0.1) !important;
+    color: var(--primary-brown) !important;
+}
+
+.dropdown-item i,
+.dropdown-item .bx {
+    width: 20px;
+    text-align: center;
+}
+
+/* ========== PAGINATION ========== */
+.pagination .page-link {
+    border-radius: 8px !important;
+    margin: 0 4px !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--primary-brown) !important;
+    padding: 8px 14px !important;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-brown) !important;
+    color: var(--white) !important;
+    border-color: var(--primary-brown) !important;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-brown) !important;
+    border-color: var(--primary-brown) !important;
+}
+
+/* ========== BREADCRUMB ========== */
+.breadcrumb {
+    background-color: transparent !important;
+    padding: 12px 0 !important;
+}
+
+.breadcrumb-item a {
+    color: var(--primary-brown) !important;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-muted) !important;
+}
+
+/* ========== NAVIGATION & MENU ========== */
+.nav-pills .nav-link {
+    border-radius: 25px !important;
+    padding: 10px 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%) !important;
+}
+
+/* ========== SECTION SPACING ========== */
+section {
+    margin-bottom: 48px !important;
+}
+
+.mb-section {
+    margin-bottom: 48px !important;
+}
+
+.py-section {
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+}
+
+/* ========== SPACING UTILITIES ========== */
+.gap-8 { gap: 8px !important; }
+.gap-12 { gap: 12px !important; }
+.gap-16 { gap: 16px !important; }
+.gap-24 { gap: 24px !important; }
+
+/* ========== BACKGROUND COLORS ========== */
+.bg-light-brown {
+    background-color: var(--light-bg) !important;
+}
+
+.bg-primary-brown {
+    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%) !important;
+    color: var(--white) !important;
+}
+
+/* ========== TEXT COLORS ========== */
+.text-primary-brown {
+    color: var(--primary-brown) !important;
+}
+
+.text-brown-dark {
+    color: var(--primary-brown-dark) !important;
+}
+
+/* ========== SCROLLBAR STYLING ========== */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-bg);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-brown-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-brown);
+}
+
+/* ========== HOVER EFFECTS ========== */
+.hover-lift {
+    transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+/* ========== FOCUS STYLES ========== */
+*:focus {
+    outline: none !important;
+}
+
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(165, 124, 73, 0.25) !important;
+}
+
+/* ========== ANIMATION ========== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+@media (max-width: 768px) {
+    .btn {
+        padding: 8px 16px !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .btn + .btn {
+        margin-left: 8px !important;
+        margin-top: 8px;
+    }
+    
+    .card-body {
+        padding: 16px !important;
+    }
+    
+    .form-container {
+        padding: 20px !important;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 10px 12px !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+    .btn,
+    .dropdown,
+    .breadcrumb,
+    nav {
+        display: none !important;
+    }
+    
+    .card,
+    .table {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
+
+/* ========== ACCESSIBILITY ========== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    outline: 2px solid var(--primary-brown) !important;
+    outline-offset: 2px;
+}
+
+/* ========== LOADER / SPINNER ========== */
+.spinner-border {
+    border-color: var(--primary-brown) !important;
+    border-right-color: transparent !important;
+}
+
+/* ========== CUSTOM CLASSES ========== */
+.shadow-brown {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.border-brown {
+    border-color: var(--primary-brown) !important;
+}
+
+.rounded-custom {
+    border-radius: 12px !important;
+}
+
+.rounded-pill-custom {
+    border-radius: 25px !important;
+}
+

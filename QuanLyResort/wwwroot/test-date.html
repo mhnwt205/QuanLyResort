@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Date Picker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        input[type="date"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Date Picker</h1>
+    
+    <div class="form-group">
+        <label for="testDate1">Ngày Test 1:</label>
+        <input type="date" id="testDate1" name="testDate1">
+    </div>
+    
+    <div class="form-group">
+        <label for="testDate2">Ngày Test 2:</label>
+        <input type="date" id="testDate2" name="testDate2">
+    </div>
+    
+    <div class="test-result">
+        <h3>Kết quả:</h3>
+        <p>Ngày 1: <span id="result1"></span></p>
+        <p>Ngày 2: <span id="result2"></span></p>
+    </div>
+
+    <script>
+        // Set ngày mặc định
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        var dayAfter = new Date(today);
+        dayAfter.setDate(dayAfter.getDate() + 2);
+        
+        document.getElementById('testDate1').value = tomorrow.toISOString().split('T')[0];
+        document.getElementById('testDate2').value = dayAfter.toISOString().split('T')[0];
+        
+        // Update results when dates change
+        document.getElementById('testDate1').addEventListener('change', function() {
+            document.getElementById('result1').textContent = this.value;
+        });
+        
+        document.getElementById('testDate2').addEventListener('change', function() {
+            document.getElementById('result2').textContent = this.value;
+        });
+        
+        // Initial values
+        document.getElementById('result1').textContent = document.getElementById('testDate1').value;
+        document.getElementById('result2').textContent = document.getElementById('testDate2').value;
+    </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+@model List<QuanLyResort.Models.Booking>
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Lịch sử đặt phòng";
+    var customer = ViewBag.Customer as QuanLyResort.Models.Customer;
+}
+
+<style>
+    .booking-table {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .table-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        margin: 0;
+    }
+    .table th {
+        background-color: #f8f9fa;
+        border: none;
+        font-weight: 600;
+        color: #495057;
+        padding: 15px 12px;
+    }
+    .table td {
+        border: none;
+        padding: 15px 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .table tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .status-confirmed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .status-pending_deposit {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .info-row:last-child {
+        border-bottom: none;
+    }
+    .info-label {
+        font-weight: 600;
+        color: #555;
+    }
+    .info-value {
+        color: #333;
+    }
+    .action-buttons {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+    .btn-detail {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .btn-detail:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        color: white;
+    }
+    .btn-cancel {
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220,53,69,0.3);
+        color: white;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #dee2e6;
+    }
+</style>
+
+<div class="hero-wrap" style="background-image: url(@Url.Content("~/deluxe-assets/images/bg_1.jpg"));">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text d-flex align-itemd-end justify-content-center">
+            <div class="col-md-9 ftco-animate text-center d-flex align-items-end justify-content-center">
+                <div class="text">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="/Customer">Trang Chủ</a></span> <span>Lịch sử đặt phòng</span></p>
+                    <h1 class="mb-4 bread">Lịch sử đặt phòng</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["DebugInfo"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i><strong>Debug Info:</strong> @TempData["DebugInfo"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (ViewBag.TotalBookings != null)
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Tổng số đặt phòng: <strong>@ViewBag.TotalBookings</strong>
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="booking-table">
+                <h4 class="table-header">
+                    <i class="fas fa-history me-2"></i>Danh sách đặt phòng
+                </h4>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Mã đặt phòng</th>
+                                <th>Phòng</th>
+                                <th>Ngày nhận</th>
+                                <th>Ngày trả</th>
+                                <th>Số khách</th>
+                                <th>Tổng tiền</th>
+                                <th>Thanh toán</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                @foreach (var booking in Model)
+                {
+                    var payment = booking.OnlinePayments?.FirstOrDefault();
+                    var canCancel = booking.Status != "cancelled" && 
+                                   booking.CheckInDate.ToDateTime(TimeOnly.MinValue) > DateTime.Now.AddHours(24);
+                    
+                                <tr>
+                                    <td>
+                                        <strong>@booking.BookingCode</strong>
+                                        <br>
+                                        <small class="text-muted">@(booking.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "")</small>
+                                    </td>
+                                    <td>
+                                        @booking.Room?.RoomNumber
+                                        <br>
+                                        <small class="text-muted">@booking.Room?.RoomType?.TypeName</small>
+                                    </td>
+                                    <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@booking.Adults người</td>
+                                    <td>
+                                        <strong class="text-primary">@(booking.TotalAmount?.ToString("N0") ?? "0") VNĐ</strong>
+                                    </td>
+                                    <td>
+                                        @if (payment != null)
+                                        {
+                                            @if (payment.PaymentMethod == "momo")
+                                            {
+                                                <i class="fas fa-mobile-alt me-1"></i>@("MoMo")
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-money-bill-wave me-1"></i>@("Tiền mặt")
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-@(booking.Status?.Replace("_", "-"))">
+                                            @(booking.Status switch
+                                            {
+                                                "confirmed" => "Đã xác nhận",
+                                                "pending" => "Chờ xác nhận",
+                                                "pending_payment" => "Chờ thanh toán",
+                                                "pending_deposit" => "Chờ cọc",
+                                                "cancelled" => "Đã hủy",
+                                                _ => booking.Status
+                                            })
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="@Url.Action("Details", "BookingHistory", new { id = booking.BookingId })" 
+                                               class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
+                                                <i class="fas fa-eye me-2"></i><span class="d-none d-md-inline">Chi tiết</span>
+                                        </a>
+                                        
+                                        @if (canCancel)
+                                        {
+                                                <form method="post" action="@Url.Action("Cancel", "BookingHistory", new { id = booking.BookingId })" 
+                                                      style="display: inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy đặt phòng">
+                                                        <i class="fas fa-times me-2"></i><span class="d-none d-md-inline">Hủy</span>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>Chưa có lịch sử đặt phòng</h3>
+                <p>Bạn chưa có đặt phòng nào. Hãy bắt đầu đặt phòng ngay!</p>
+                <a href="@Url.Action("Index", "Rooms")" class="btn btn-primary btn-padding-standard">
+                    <i class="fas fa-bed me-2"></i>Đặt phòng ngay
+                </a>
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,345 @@
+@model QuanLyResort.ViewModels.PaymentResultViewModel
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Kết quả thanh toán";
+    var hasSuccess = TempData["SuccessMessage"] != null || Model.IsSuccess || !string.IsNullOrEmpty(Model.BookingCode);
+}
+
+<style>
+    .result-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+    .result-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #4CAF50, #8BC34A);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        font-size: 50px;
+        color: white;
+    }
+    .error-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #f44336, #ff9800);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        font-size: 50px;
+        color: white;
+    }
+    .booking-details {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+    }
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+    .detail-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .detail-value {
+        color: #6c757d;
+    }
+    .btn-action {
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+    }
+    .btn-secondary:hover {
+        background: #5a6268;
+        color: white;
+    }
+    .payment-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+    }
+</style>
+
+<div class="result-container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>@TempData["SuccessMessage"]</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>@TempData["ErrorMessage"]</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    <div class="result-card">
+        @{
+            var isReallySuccess = Model.IsSuccess || 
+                                  TempData["SuccessMessage"] != null ||
+                                  Model.PaymentMethod == "cash" ||
+                                  !string.IsNullOrEmpty(Model.BookingCode);
+        }
+        
+        @if (isReallySuccess)
+        {
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1 class="text-success mb-3">🎉 Đặt phòng thành công!</h1>
+            
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <p class="lead text-success mb-4"><strong>@Model.Message</strong></p>
+            }
+            else
+            {
+                <p class="lead text-success mb-4"><strong>Cảm ơn bạn đã đặt phòng tại Resort Deluxe!</strong></p>
+            }
+            
+            <p class="text-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Đặt phòng của bạn đã được ghi nhận thành công!
+            </p>
+            
+            @if (Model.PaymentMethod == "cash")
+            {
+                <p class="text-info">
+                    <i class="fas fa-envelope me-2"></i>
+                    Vui lòng kiểm tra email để biết hướng dẫn thanh toán cọc.
+                </p>
+            }
+            else if (Model.PaymentMethod == "momo")
+            {
+                <p class="text-info">
+                    <i class="fas fa-mobile-alt me-2"></i>
+                    Thanh toán MoMo của bạn đã được xử lý.
+                </p>
+            }
+        }
+        else
+        {
+            <div class="error-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h1 class="text-warning mb-3">Đang chờ thanh toán</h1>
+            <p class="lead text-muted mb-4">@Model.Message</p>
+        }
+
+        <!-- Booking Details -->
+        <div class="booking-details">
+            <h4 class="mb-4"><i class="fas fa-info-circle me-2"></i>Thông tin đặt phòng</h4>
+            <div class="detail-row">
+                <span class="detail-label">Mã đặt phòng:</span>
+                <span class="detail-value"><strong>@Model.BookingCode</strong></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Phòng:</span>
+                <span class="detail-value">@Model.RoomName</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Ngày nhận phòng:</span>
+                <span class="detail-value">@Model.CheckInDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Ngày trả phòng:</span>
+                <span class="detail-value">@Model.CheckOutDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Ngày đặt:</span>
+                <span class="detail-value">@Model.BookingDate.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="payment-info">
+            <h4 class="mb-4"><i class="fas fa-credit-card me-2"></i>Thông tin thanh toán</h4>
+            <div class="detail-row">
+                <span class="detail-label">Phương thức:</span>
+                <span class="detail-value">
+                    @if (Model.PaymentMethod == "momo")
+                    {
+                        <i class="fas fa-mobile-alt me-2"></i>@("MoMo")
+                    }
+                    else
+                    {
+                        <i class="fas fa-money-bill-wave me-2"></i>@("Tiền mặt")
+                    }
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Số tiền:</span>
+                <span class="detail-value"><strong>@Model.Amount.ToString("N0") VNĐ</strong></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Trạng thái:</span>
+                <span class="detail-value">
+                    @if (Model.IsSuccess)
+                    {
+                        <span class="badge bg-success">Đã thanh toán</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Chờ thanh toán</span>
+                    }
+                </span>
+            </div>
+        </div>
+
+        @if (!Model.IsSuccess && Model.PaymentMethod == "cash")
+        {
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle me-2"></i>Hướng dẫn thanh toán cọc</h5>
+                <p class="mb-3">Vui lòng chuyển khoản <strong>@Model.Amount.ToString("N0") VNĐ</strong> để cọc phòng trong vòng 24h.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Thông tin chuyển khoản:</strong>
+                        <ul class="list-unstyled mt-2">
+                            <li><i class="fas fa-university me-2"></i>Ngân hàng: Vietcombank</li>
+                            <li><i class="fas fa-credit-card me-2"></i>STK: 1234567890</li>
+                            <li><i class="fas fa-user me-2"></i>Chủ TK: KHACH SAN DELUXE</li>
+                            <li><i class="fas fa-comment me-2"></i>Nội dung: @Model.BookingCode</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Lưu ý:</strong>
+                        <ul class="list-unstyled mt-2">
+                            <li><i class="fas fa-clock me-2"></i>Chuyển khoản trong 24h</li>
+                            <li><i class="fas fa-phone me-2"></i>Liên hệ: 0123456789</li>
+                            <li><i class="fas fa-envelope me-2"></i>Email: info@deluxeresort.vn</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="mt-4">
+            @if (Model.IsSuccess)
+            {
+                <a href="/Customer" class="btn-action btn-primary">
+                    <i class="fas fa-home me-2"></i>Về trang chủ
+                </a>
+                <a href="@Url.Action("Index", "BookingHistory", new { area = "Customer" })" class="btn-action btn-success">
+                    <i class="fas fa-history me-2"></i>Xem lịch sử đặt phòng
+                </a>
+                <a href="/Customer/Rooms" class="btn-action btn-secondary">
+                    <i class="fas fa-bed me-2"></i>Xem thêm phòng
+                </a>
+            }
+            else
+            {
+                <a href="/Customer" class="btn-action btn-primary">
+                    <i class="fas fa-home me-2"></i>Về trang chủ
+                </a>
+                <a href="@Url.Action("Index", "BookingHistory", new { area = "Customer" })" class="btn-action btn-info">
+                    <i class="fas fa-history me-2"></i>Xem lịch sử đặt phòng
+                </a>
+                <a href="/Customer/Rooms" class="btn-action btn-secondary">
+                    <i class="fas fa-bed me-2"></i>Đặt phòng khác
+                </a>
+            }
+        </div>
+
+        @* Hiển thị thông tin chuyển khoản cho thanh toán tiền mặt *@
+        @if (Model.PaymentMethod == "cash" && (Model.IsSuccess || isReallySuccess))
+        {
+            <div class="alert alert-warning mt-4" style="border-left: 4px solid #ffc107;">
+                <h5 class="alert-heading"><i class="fas fa-university me-2"></i>Thông tin chuyển khoản</h5>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>🏦 Ngân hàng:</strong> Vietcombank</p>
+                        <p class="mb-2"><strong>💳 Số tài khoản:</strong> <span class="text-primary fw-bold">1234567890</span></p>
+                        <p class="mb-2"><strong>👤 Chủ TK:</strong> KHACH SAN RESORT DELUXE</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>📝 Nội dung CK:</strong> <span class="text-danger fw-bold">@Model.BookingCode</span></p>
+                        <p class="mb-2"><strong>💵 Số tiền cọc:</strong> <span class="text-success fw-bold">@Model.Amount.ToString("N0") VNĐ</span></p>
+                    </div>
+                </div>
+                <hr>
+                <p class="mb-0 text-danger"><i class="fas fa-exclamation-triangle me-2"></i><strong>Lưu ý:</strong> Vui lòng chuyển khoản trong vòng 24h để giữ phòng.</p>
+            </div>
+        }
+        
+        @if (!Model.IsSuccess && Model.PaymentMethod != "cash")
+        {
+            <div class="mt-4">
+                <p class="text-muted">
+                    <i class="fas fa-envelope me-2"></i>
+                    Chúng tôi đã gửi thông tin chi tiết đến email của bạn. 
+                    Vui lòng kiểm tra hộp thư và làm theo hướng dẫn.
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@if (hasSuccess)
+{
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Show success notification với SweetAlert2
+        window.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: '🎉 Đặt phòng thành công!',
+                html: '<strong>Mã đặt phòng:</strong> @Model.BookingCode<br>' +
+                      '@(Model.PaymentMethod == "cash" ? "Vui lòng kiểm tra email để biết hướng dẫn thanh toán cọc." : "Thanh toán của bạn đã được xử lý.")',
+                showConfirmButton: true,
+                confirmButtonText: 'Tuyệt vời!',
+                confirmButtonColor: '#667eea',
+                timer: 5000,
+                timerProgressBar: true
+            });
+        });
+    </script>
+}

@@ -1,0 +1,137 @@
+@model IEnumerable<QuanLyResort.ViewModels.StockIssueViewModel>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản lý phiếu xuất kho";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Danh sách phiếu xuất kho</h5>
+                    <a href="@Url.Action("Create")" class="btn btn-primary">
+                        <i class="bx bx-plus"></i> Tạo phiếu xuất kho mới
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="stockIssuesTable">
+                            <thead>
+                                <tr>
+                                    <th>Số phiếu</th>
+                                    <th>Kho</th>
+                                    <th>Phòng ban</th>
+                                    <th>Người yêu cầu</th>
+                                    <th>Mục đích</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var issue in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="fw-semibold">@issue.IssueNumber</span>
+                                        </td>
+                                        <td>@issue.WarehouseName</td>
+                                        <td>@issue.DepartmentName</td>
+                                        <td>@issue.RequestedByName</td>
+                                        <td>
+                                            <span class="text-truncate d-inline-block" style="max-width: 200px;" title="@issue.Purpose">
+                                                @issue.Purpose
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @switch (issue.Status)
+                                            {
+                                                case "pending":
+                                                    <span class="badge bg-label-warning">Chờ duyệt</span>
+                                                    break;
+                                                case "approved":
+                                                    <span class="badge bg-label-success">Đã duyệt</span>
+                                                    break;
+                                                case "issued":
+                                                    <span class="badge bg-label-primary">Đã xuất</span>
+                                                    break;
+                                                case "cancelled":
+                                                    <span class="badge bg-label-danger">Đã hủy</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-label-secondary">@issue.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@issue.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="@Url.Action("Details", new { id = issue.IssueId })">
+                                                        <i class="bx bx-show me-1"></i> Chi tiết
+                                                    </a>
+                                                    @if (issue.Status == "pending")
+                                                    {
+                                                        <a class="dropdown-item" href="@Url.Action("Approve", new { id = issue.IssueId })" onclick="return confirm('Duyệt phiếu xuất kho này?')">
+                                                            <i class="bx bx-check me-1"></i> Duyệt
+                                                        </a>
+                                                    }
+                                                    @if (issue.Status == "approved")
+                                                    {
+                                                        <a class="dropdown-item" href="@Url.Action("Issue", new { id = issue.IssueId })" onclick="return confirm('Thực hiện xuất kho?')">
+                                                            <i class="bx bx-package me-1"></i> Xuất kho
+                                                        </a>
+                                                    }
+                                                    @if (issue.Status == "pending" || issue.Status == "approved")
+                                                    {
+                                                        <a class="dropdown-item text-danger" href="@Url.Action("Delete", new { id = issue.IssueId })" onclick="return confirm('Hủy phiếu xuất kho này?')">
+                                                            <i class="bx bx-trash me-1"></i> Hủy
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#stockIssuesTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                },
+                "order": [[6, "desc"]],
+                "pageLength": 25,
+                "responsive": true
+            });
+        });
+    </script>
+}
